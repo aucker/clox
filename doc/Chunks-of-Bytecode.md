@@ -234,3 +234,21 @@ print 2;
 ```
 The compiled chunk needs to not only contain the values 1 and 2, but know *when* to produce them so that they are 
 printed in the right order. Thus, we need an instruction that produces a particular constant.
+
+When the VM executes a constant instruction, it "loads" the constant for use. This new instruction is a little more 
+complex than `OP_RETURN`. In the above example, we load two different constants. A single bare opcode isn't enough to 
+know *which* constant to load.
+
+> The means to "load" or "produce" a constant is vague because we haven't learned how the VM actually executes code at
+> runtime yet.
+
+To handle cases like this, our bytecode - like most others - allows instructions to have **operands**. These are stored 
+as binary data immediately after the opcode in the instruction stream and let us parameterize what the instruction does.
+![operands](../pic/operands.png)
+
+> Bytecode instruction operands are *not* the same as the operands passed to an arithmetic operator. Instruction 
+> operands are a lower-level notion that modify how the bytecode instruction itself behaves.
+
+Each opcode determines how many operand bytes it has and what they mean. E.g., a simple operation like "return" may have
+no operands, where an instruction for "load local variable" needs an operand to identify which variable to load. Each 
+time we add a new opcode to clox, we specify what its operands look like - its **instruction format**.
