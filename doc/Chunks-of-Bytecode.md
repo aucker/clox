@@ -185,3 +185,52 @@ memory.
 It can do that only if the memory after that block isn't already in use. If there isn't room to grow the block, 
 `realloc()` instead allocates a *new* block of memory of the desired size, copies over the old bytes, frees the old 
 block, and then returns a pointer to the new block.
+
+## Constants
+
+Now that we have a rudimentary chunk structure working, let's start making it more useful. We can store *code* in 
+chunks, but what about *data*? Many values the interpreter works with are created at runtime as the result of 
+operations.
+```shell
+1 + 2;
+```
+The value 3 appears nowhere in the code here. However, the literals `1` and `2` do. To compile that statement to 
+bytecode, we need some sort of instruction that means "produce a constant" and those literal values need some sort of
+instruction that means "produce a constant" and those literal values need to get stored in the chunk somewhere. In jlox,
+the Expr.Literal AST node held the value. We need a different solution now that we don't have a syntax tree.
+
+### *Representing values*
+
+Back to the question of where to store constants in a chunk. For small fixed-size values like integers, many instruction
+sets store the value directly in the code stream right after the opcode. These are called **immediate instructions**
+because the bits for the value are immediately after the opcode.
+
+That doesn't work well for large or variable-sized constants like strings. In a native compiler to machine code, those
+bigger constants get stored in a separate "constant data" region in the binary executable. Then, the instruction to load
+a constant has an address or offset pointing to where the value is stored in that section.
+
+Most virtual machines do something similar. E.g., the Java Virtual Machine 
+[associates a **constant pool**](https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.4) with each
+compiled class. That sounds good enough for clox to me. Each chunk will carry with it a list of the values that appear
+as literals in the program. To keep things simper, we'll put *all* constants in there, even simple integers.
+
+> In addition to needing two kinds of constant instructions - one for immediate values and one for constants in the
+> constant table - immediates also force us to worry about alignment, padding, and endianness. Some architectures 
+> aren't happy if you try to say, stuff a 4-byte integer at an odd address.
+
+### *Value arrays*
+
+The constant pool is an array of values. The instruction to load a constant looks up the value by index in that array.
+As with our bytecode array, the compiler doesn't know how big the array needs to be ahead of time. So, again, we need a
+dynamic one. Since C doesn't have generic data structures, we'll write another dynamic array data structure, this time
+for Value.
+
+### *Constant instructions*
+
+We can *store* constants in chunks, but we also need to *execute* them. In a piece of code like:
+```shell
+print 1;
+print 2;
+```
+The compiled chunk needs to not only contain the values 1 and 2, but know *when* to produce them so that they are 
+printed in the right order. Thus, we need an instruction that produces a particular constant.
