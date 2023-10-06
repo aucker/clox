@@ -9,4 +9,6 @@ add_executable(clox main.c
         chunk.c
         memory.h
         memory.c
+        debug.h
+        debug.c
 )

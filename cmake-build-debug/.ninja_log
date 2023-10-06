@@ -1,0 +1,8 @@
+# ninja log v5
+1	134	7183248397081006	CMakeFiles/clox.dir/main.c.obj	a8ddc3711ceb54eb
+137	357	7183248399274818	clox.exe	8695f38f21e5391c
+8	136	7183248397099768	CMakeFiles/clox.dir/chunk.c.obj	9f932dc34881edf7
+14	137	7183248397109769	CMakeFiles/clox.dir/memory.c.obj	ee715a25231d528d
+2	98	7183254889697998	CMakeFiles/clox.dir/main.c.obj	a8ddc3711ceb54eb
+1	90	7183256038261728	CMakeFiles/clox.dir/debug.c.obj	8c7bc1554395ddad
+91	215	7183256039480090	clox.exe	81b180734e89276d
