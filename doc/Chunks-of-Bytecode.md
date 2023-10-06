@@ -139,3 +139,49 @@ up the implementation one language feature at a time. In this chapter, we'll get
 place and create the data structures needed to store and represent a chunk of bytecode.
 
 ## Getting Started
+
+Dynamic Arrays provide:
+* Cache-friendly, dense storage
+* Constant-time indexed element lookup
+* Constant-time appending to the end of the array
+
+In Dynamic Arrays, when we add an element, if the count is less than the capacity, then there is already available space
+in the array. We store the new element right in there and bump the count.
+![dynamic-array](../pic/dynamic-array.png)
+If we have no spare capacity, then the process is a little more involved.
+![dynamic-array-malloc](../pic/dynamic-array-malloc.png)
+1. Allocate a new array with more capacity.
+2. Copy the existing elements from the old array to the new one.
+3. Store the new `capacity`.
+4. Delete the old array
+5. Update `code` to point to the new array
+6. Store the element in the new array now that there is room
+7. Update the `count`
+
+> Copying the existing elements when you grow the array makes it seem like appending an element is O(n), not O(1) like 
+> mentioned above. However, you need to do this copy step only on *some* of the appends. Most of the time, there is 
+> already extra capacity, so you don't need to copy.
+> 
+> To understand how this works, we need [amortized analysis](https://en.wikipedia.org/wiki/Amortized_analysis). That 
+> shows us that as long as we grow the array by a multiple of its current size, when we average out the cost of a 
+> *sequence* of appends, each append if O(1).
+
+### *A dynamic array instructions*
+
+The interesting cases are when both `oldSize` and `newSize` are not zero. Those tell `realloc()` to resize the 
+previously allocated block. If the new size is smaller than the existing block of memory, it simply updates the size of
+the block and returns the same pointer you gave it. If the new size is larger, it attempts to grow the existing block of
+memory.
+
+> Since all we passed in was a bare pointer to the first byte of memory, what does it mean to "update" the block's size?
+> Under the hood, the memory allocator maintains additional bookkeeping information for each block of heap-allocated
+> memory, including its size.
+> 
+> Given a pointer to some previously allocated memory, it can find this bookkeeping information, which is necessary to
+> be able to cleanly free it. It's this size metadata that `realloc()` updates.
+> 
+> Many implementations of `malloc()` store the allocated size in memory right *before* the returned address.
+
+It can do that only if the memory after that block isn't already in use. If there isn't room to grow the block, 
+`realloc()` instead allocates a *new* block of memory of the desired size, copies over the old bytes, frees the old 
+block, and then returns a pointer to the new block.

@@ -1,0 +1,30 @@
+//
+// Created by aucker on 10/7/2023.
+//
+#include <stdlib.h>
+
+#include "memory.h"
+
+/**
+ * There're four actions for reallocate, all we care is oldSize and newSize:
+ * o->0 & n->non-zero: Allocate new block
+ * o->non-zero & n->0: Free allocation
+ * o->non-zero & n->smaller than o: Shrink existing allocation
+ * o->non-zero & n->larger than o: Grow existing allocation
+ * @param pointer
+ * @param oldSize
+ * @param newSize
+ * @return
+ */
+void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
+    if (newSize == 0) {
+        free(pointer);
+        return NULL;
+    }
+
+    // when newSize if zero, we handle deallocation case ourselves by calling `free()`.
+    // Otherwise, we rely on C standard library's `realloc()` function.
+    void* result = realloc(pointer, newSize);
+    if (result == NULL) exit(1);  // allocation fail w/o enough memory
+    return result;
+}
