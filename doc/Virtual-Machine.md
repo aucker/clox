@@ -136,3 +136,6 @@ are one of those.
 
 ### *Stack tracing*
 
+We have a working stack, but it's hard to *see* that it's working. When we start implementing more complex instructions
+and compiling and running larger pieces of code, we'll end up with a lot of values crammed into that array. It would 
+make our lives as VM hackers easier if we had some visibility into the stack.

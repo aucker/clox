@@ -15,3 +15,6 @@
 23	139	7183706591858827	CMakeFiles/clox.dir/value.c.obj	7dbae6f8d65be0d4
 28	141	7183706591898846	CMakeFiles/clox.dir/debug.c.obj	8c7bc1554395ddad
 142	252	7183706592893080	clox.exe	7f6a904e9cebb3d8
+1	87	7183774247663869	CMakeFiles/clox.dir/main.c.obj	a8ddc3711ceb54eb
+8	105	7183774247842354	CMakeFiles/clox.dir/vm.c.obj	2c170a43967ddc3d
+106	224	7183774248988112	clox.exe	7f6a904e9cebb3d8
