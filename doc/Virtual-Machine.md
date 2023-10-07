@@ -139,3 +139,15 @@ are one of those.
 We have a working stack, but it's hard to *see* that it's working. When we start implementing more complex instructions
 and compiling and running larger pieces of code, we'll end up with a lot of values crammed into that array. It would 
 make our lives as VM hackers easier if we had some visibility into the stack.
+
+## An Arithmetic Calculator
+
+The heart and soul of our VM are in place now. The bytecode loop dispatches and executes instructions. The stack grows 
+and shrinks as values flow through it. The two halves work, but it's hard to get a feel for how cleverly they interact
+with only the two rudimentary instructions we have so far. So let's teach our interpreter to do arithmetic.
+
+Starting with the simplest arithmetic operation, unary negation.
+```shell
+var a = 1.2;
+print -a;  // -1.2
+```
