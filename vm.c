@@ -9,12 +9,32 @@
 
 VM vm;
 
-void initVM() {
+static void resetStack() {
+    // free the stack, now empty
+    vm.stackTop = vm.stack;
+}
 
+void initVM() {
+    resetStack();
 }
 
 void freeVM() {
 
+}
+
+/*
+ * This is how push stack works
+ * in a pure pointer view
+ */
+void push(Value value) {
+    *vm.stackTop = value;
+    vm.stackTop++;
+}
+
+// pointer view of pop stack
+Value pop() {
+    vm.stackTop--;
+    return *vm.stackTop;
 }
 
 static InterpretResult run() {
