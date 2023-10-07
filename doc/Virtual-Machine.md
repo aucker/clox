@@ -151,3 +151,53 @@ Starting with the simplest arithmetic operation, unary negation.
 var a = 1.2;
 print -a;  // -1.2
 ```
+
+We need to add a `OP_NEGATE` in chunk.h, and execute it in vm.c file, also add information in debug.c.
+
+### *Binary operators*
+
+Unary aren't *that* impressive. We still only ever have a single value on the stack. To really see some depth, we need 
+binary operators. Lox has four binary arithmetic operators: addition, subtraction, multiplication, and division.
+
+To be careful macro authors, we want to ensure those statements all end up in the same scope when the macro is expanded.
+Imagine if you defined:
+```c
+#define WAKE_UP() makeCoffee(); drinkCoffee();
+```
+And then used it like:
+```c
+if (morning) WAKE_UP();
+```
+The intent is to execute both statements of the macro body only if `morning` is true. But it expands to:
+```c
+if (morning) makeCoffee(); drinkCoffee();;
+```
+Oops, the `if` attaches only to the *first* statement. You might think you could fix this using a block.
+```c
+#define WAKE_UP() { makeCoffee(); drinkCoffee(); }
+```
+That's better, but you still risk:
+```c
+if (morning)
+    WAKE_UP();
+else
+    sleepIn();
+```
+Now you get a compile error on the `else` because of the trailing `;` after the macro's block. Using a `do while` loop 
+in the macro looks funny, but it gives you a way to contain multiple statements inside a block that *also* permits a 
+semicolon at the end.
+
+Where were we? Right, so what the body of that macro does is straightforward. A binary operator takes two operands, so 
+it pops twice. It performs the operation on those two values and then pushes the result.
+
+Pay close attention to the *order* of the two pops. Note that we assign the first popped operand to `b`, not `a`.
+E.g., if we compile `3 - 1`, the data flow between the instructions looks like so:
+![order-compile](../pic/order-compile.png)
+
+
+The arithmetic instruction formats are simple, like `OP_RETURN`. Even though the arithmetic *operators* take operands - 
+which are found on the stack - the arithmetic *bytecode instructions* do not.
+
+Let's put some of our new instructions through their paces by evaluating a larger expression:
+![larger-expression](../pic/larger-expression.png)
+We need to hand-compile that AST to bytecode in `main.c` file.

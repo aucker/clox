@@ -40,7 +40,25 @@ Value pop() {
 static InterpretResult run() {
 #define READ_BYTE() (*vm.ip++)
 #define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()])
-        for (;;) {
+    /*
+     * Did you even know you can pass an *operator* as an argument to a macro?
+     * The preprocessor doesn't care that operators aren't first class in C.
+     * It's just text tokens for the preprocessor.
+     */
+#define BINARY_OP(op)     \
+    do {                  \
+        double b = pop(); \
+        double a = pop(); \
+        push(a op b);     \
+    } while (false)
+/*
+ * Note the *order* of two pops matters.
+ * When the operands themselves are calculated, the left is evaluated first,
+ * then the right. That means the left operand gets pushed before the right
+ * operand. So the right operand will be on top of the stack.
+ */
+
+    for (;;) {
 #ifdef DEBUG_TRACE_EXECUTION
             printf("        ");
             for (Value* slot = vm.stack; slot < vm.stackTop; slot++) {
@@ -61,7 +79,11 @@ static InterpretResult run() {
                     push(constant);
                     break;
                 }
-                case OP_NEGATE: push(-pop()); break;
+                case OP_ADD:      BINARY_OP(+); break;
+                case OP_SUBTRACT: BINARY_OP(-); break;
+                case OP_MULTIPLY: BINARY_OP(*); break;
+                case OP_DIVIDE:   BINARY_OP(/); break;
+                case OP_NEGATE:   push(-pop()); break;
                 case OP_RETURN: {
                     printValue(pop());
                     printf("\n");
@@ -71,6 +93,7 @@ static InterpretResult run() {
         }
 #undef READ_BYTE
 #undef READ_CONSTANT
+#undef BINARY_OP
         /*
          * Undefining these macros explicitly might seem needlessly fastidious, but C
          * tends to punish sloppy users, and the C preprocessor doubly so.
