@@ -148,6 +148,11 @@ static void binary() {
     }
 }
 
+static void grouping() {
+    expression();
+    consume(TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
+}
+
 static void expression() {
     // ?
     /*
@@ -231,10 +236,6 @@ static ParseRule* getRule(TokenType type) {
     return &rules[type];
 }
 
-static void grouping() {
-    expression();
-    consume(TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
-}
 
 //void compile(const char* source) {
 bool compile(const char* source, Chunk* chunk) {
