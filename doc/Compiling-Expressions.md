@@ -55,3 +55,21 @@ that uses Pratt's technique to parse Lox's particular grammar and output the rig
 We've assembled our parsing and code generation utility functions. The missing piece is the code in the middle that 
 connects those together.
 ![parse-prefix-expression](../pic/parse-prefix-expression.png)
+
+## A Pratt Parser
+
+![parse-function](../pic/parse-function.png)
+
+If you really want to mind meld with Vaughan Pratt and fully understand the algorithm, step through the parser in the 
+debugger as it works through some expressions. Maybe a picture will help. There's only a handful of functions, but they 
+are marvelously interwined.
+
+Later, we'll need to tweak the code in this chapter to handle assignment. But, otherwise, what we wrote covers all our 
+expression compiling needs for the rest of the book. We'll plug additional parsing functions into the table when we add 
+new kinds of expressions, but `parsePrecedence()` is complete.
+
+## Dumping Chunks
+
+While we're here in the core of our compiler, we should put in some instrumentation. To help debug the generated 
+bytecode, we'll add support for dumping the chunk once the compiler finishes. We had some temporary logging earlier when
+we hand-authored the chunk. Now we'll put in some real code so that we can enable it whenever we want.
