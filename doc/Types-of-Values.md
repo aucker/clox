@@ -49,3 +49,25 @@ about the caller seeing modifications to the value.
 
 ## Dynamically Typed Numbers
 
+## Two New Types
+
+All our existing clox code is back in working order. Finally, it's time to add some new types. We've got a running 
+numeric calculator that now does a number of pointless paranoid runtime type checks. We can represent other types 
+internally, but there's no way for a user's program to ever create a Value of one of those types.
+
+Not until now, that is. We'll start by adding compiler support for the three new literals: `true`, `false`, and `nil`. 
+They're all pretty simple, so we'll do all three in a single batch.
+
+With number literals, we had to deal with the fact that there are billions of possible numeric values. We attended to 
+that by storing the literal's value in the chunk's constant table and emitting a bytecode instruction that simply loaded
+that constant. We could do the same thing for the new types. We'd store, say, `true`, in the constant table, and use an
+`OP_CONSTANT` to read it out.
+
+> For bytecode VM, it spends much of its execution time reading and decoding instructions. The fewer, simpler 
+> instructions you need for a given piece of behavior, the faster it goes. So classic optimization is shorter 
+> instructions.
+> 
+> E.g., the Java bytecode instruction set has dedicated instructions for loading 0.0, 1.0, 2.0, and the integer values
+> from -1 through 5. (This ends up being a vestigial optimization given that most mature JVMs now JIT-compile the 
+> bytecode to machine code before execution anyway.)
+
