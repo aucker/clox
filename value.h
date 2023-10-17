@@ -40,7 +40,7 @@ typedef struct {
 #define NIL_VAL           ((Value){VAL_NIL, {.number = 0}})
 #define NUMBER_VAL(value) ((Value){VAL_NUMBER, {.number = value}})
 //> this takes a bare Obj pointer and wraps it in a full Value.
-#define OBJ_VAL(value)    ((Value){VAL_OBJ, {.obj = (Obj*)object}}
+#define OBJ_VAL(object)   ((Value){VAL_OBJ, {.obj = (Obj*)object}})
 
 //typedef double Value;
 
