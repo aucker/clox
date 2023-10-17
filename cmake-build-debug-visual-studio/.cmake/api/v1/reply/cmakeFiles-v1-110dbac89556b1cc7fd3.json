@@ -16,7 +16,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "cmake-build-debug/CMakeFiles/3.26.4/CMakeSystem.cmake"
+			"path" : "cmake-build-debug-visual-studio/CMakeFiles/3.26.4/CMakeSystem.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -261,16 +261,11 @@
 		{
 			"isCMake" : true,
 			"isExternal" : true,
-			"path" : "D:/Program Files/JetBrains/CLion 2023.2.1/bin/cmake/win/x64/share/cmake-3.26/Modules/Compiler/GNU-FindBinUtils.cmake"
-		},
-		{
-			"isCMake" : true,
-			"isExternal" : true,
 			"path" : "D:/Program Files/JetBrains/CLion 2023.2.1/bin/cmake/win/x64/share/cmake-3.26/Modules/CMakeCCompiler.cmake.in"
 		},
 		{
 			"isGenerated" : true,
-			"path" : "cmake-build-debug/CMakeFiles/3.26.4/CMakeCCompiler.cmake"
+			"path" : "cmake-build-debug-visual-studio/CMakeFiles/3.26.4/CMakeCCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -310,12 +305,12 @@
 		{
 			"isCMake" : true,
 			"isExternal" : true,
-			"path" : "D:/Program Files/JetBrains/CLion 2023.2.1/bin/cmake/win/x64/share/cmake-3.26/Modules/Compiler/GNU-C.cmake"
+			"path" : "D:/Program Files/JetBrains/CLion 2023.2.1/bin/cmake/win/x64/share/cmake-3.26/Modules/Compiler/MSVC-C.cmake"
 		},
 		{
 			"isCMake" : true,
 			"isExternal" : true,
-			"path" : "D:/Program Files/JetBrains/CLion 2023.2.1/bin/cmake/win/x64/share/cmake-3.26/Modules/Compiler/GNU.cmake"
+			"path" : "D:/Program Files/JetBrains/CLion 2023.2.1/bin/cmake/win/x64/share/cmake-3.26/Modules/Compiler/MSVC.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -325,12 +320,12 @@
 		{
 			"isCMake" : true,
 			"isExternal" : true,
-			"path" : "D:/Program Files/JetBrains/CLion 2023.2.1/bin/cmake/win/x64/share/cmake-3.26/Modules/Platform/Windows-GNU-C.cmake"
+			"path" : "D:/Program Files/JetBrains/CLion 2023.2.1/bin/cmake/win/x64/share/cmake-3.26/Modules/Platform/Windows-MSVC-C.cmake"
 		},
 		{
 			"isCMake" : true,
 			"isExternal" : true,
-			"path" : "D:/Program Files/JetBrains/CLion 2023.2.1/bin/cmake/win/x64/share/cmake-3.26/Modules/Platform/Windows-GNU.cmake"
+			"path" : "D:/Program Files/JetBrains/CLion 2023.2.1/bin/cmake/win/x64/share/cmake-3.26/Modules/Platform/Windows-MSVC.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -344,17 +339,12 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "cmake-build-debug/CMakeFiles/3.26.4/CMakeRCCompiler.cmake"
+			"path" : "cmake-build-debug-visual-studio/CMakeFiles/3.26.4/CMakeRCCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
 			"isExternal" : true,
 			"path" : "D:/Program Files/JetBrains/CLion 2023.2.1/bin/cmake/win/x64/share/cmake-3.26/Modules/CMakeRCInformation.cmake"
-		},
-		{
-			"isCMake" : true,
-			"isExternal" : true,
-			"path" : "D:/Program Files/JetBrains/CLion 2023.2.1/bin/cmake/win/x64/share/cmake-3.26/Modules/Platform/Windows-windres.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -423,18 +413,13 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "cmake-build-debug/CMakeFiles/3.26.4/CMakeCCompiler.cmake"
-		},
-		{
-			"isCMake" : true,
-			"isExternal" : true,
-			"path" : "D:/Program Files/JetBrains/CLion 2023.2.1/bin/cmake/win/x64/share/cmake-3.26/Modules/Platform/Windows-GNU-C-ABI.cmake"
+			"path" : "cmake-build-debug-visual-studio/CMakeFiles/3.26.4/CMakeCCompiler.cmake"
 		}
 	],
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "C:/Users/Lenovo/Documents/play/clox/cmake-build-debug",
+		"build" : "C:/Users/Lenovo/Documents/play/clox/cmake-build-debug-visual-studio",
 		"source" : "C:/Users/Lenovo/Documents/play/clox"
 	},
 	"version" : 
