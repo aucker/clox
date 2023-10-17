@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "memory.h"
+#include "vm.h"
 
 /**
  * There're four actions for reallocate, all we care is oldSize and newSize:
@@ -27,4 +28,24 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
     void* result = realloc(pointer, newSize);
     if (result == NULL) exit(1);  // allocation fail w/o enough memory
     return result;
+}
+
+static void freeObject(Obj* object) {
+    switch (object->type) {
+        case OBJ_STRING: {
+            ObjString* string = (ObjString*)object;
+            FREE_ARRAY(char, string->chars, string->length + 1);
+            FREE(ObjString, object);
+            break;
+        }
+    }
+}
+
+void freeObjects() {
+    Obj* object = vm.objects;
+    while (object != NULL) {
+        Obj* next = object->next;
+        freeObject(object);
+        object = next;
+    }
 }

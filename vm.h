@@ -20,6 +20,7 @@ typedef struct {
     uint8_t* ip;
     Value stack[STACK_MAX];
     Value* stackTop;
+    Obj* objects;
 } VM;
 
 typedef enum {
@@ -27,6 +28,10 @@ typedef enum {
     INTERPRET_COMPILE_ERROR,
     INTERPRET_RUNTIME_ERROR
 } InterpretResult;
+
+// The 'object' module is directly using the global `vm` variable
+// from the "vm" module, so we need to expose that externally
+extern VM vm;
 
 void initVM();
 void freeVM();
