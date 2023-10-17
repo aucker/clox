@@ -7,6 +7,8 @@
 
 #include "common.h"
 
+#define ALLOCATE(type, count) \
+    (type*) reallocate(NULL, 0, sizeof(type) * (count))
 /*
  * The right way to pick a value for this is to profile against
  * real-world usage and see which constant makes the best performance
