@@ -36,6 +36,27 @@ static Entry* findEntry(Entry* entries, int capacity,
     }
 }
 
+static void adjustCapacity(Table* table, int capacity) {
+    Entry* entries = ALLOCATE(Entry, capacity);
+    for (int i = 0; i < capacity; i++) {
+        entries[i].key = NULL;
+        entries[i].value = NIL_VAL;
+    }
+
+    for (int i = 0; i < table->capacity; i++) {
+        Entry* entry = &table->entries[i];
+        if (entry->key == NULL) continue;
+
+        Entry* dest = findEntry(entries, capacity, entry->key);
+        dest->key = entry->key;
+        dest->value = entry->value;
+    }
+
+    FREE_ARRAY(Entry, table->entries, table->capacity);
+    table->entries = entries;
+    table->capacity = capacity;
+}
+
 // We put the string object into hash tables
 bool tableSet(Table* table, ObjString* key, Value value) {
     /*
@@ -53,4 +74,14 @@ bool tableSet(Table* table, ObjString* key, Value value) {
     entry->key = key;
     entry->value = value;
     return isNewKey;
+}
+
+// copy all entries of one hash table into another
+void tableAddAll(Table* from, Table* to) {
+    for (int i = 0; i < from->capacity; i++) {
+        Entry* entry = &from->entries[i];
+        if (entry->key != NULL) {
+            tableSet(to, entry->key, entry->value);
+        }
+    }
 }
