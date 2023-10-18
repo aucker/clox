@@ -103,3 +103,5 @@ something a little more ambitious and get variables going. There are three opera
 * Accessing the value of a variable using an identifier expression
 * Storing a new value in an existing variable using an assignment expression.
 
+## Reading Variables
+
