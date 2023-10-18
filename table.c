@@ -26,14 +26,40 @@ void freeTable(Table* table) {
 static Entry* findEntry(Entry* entries, int capacity,
                         ObjString* key) {
     uint32_t index = key->hash % capacity;
+    Entry* tombstone = NULL;
+
     for (;;) {
         Entry* entry = &entries[index];
+        // we probe a sequence during a lookup, we hit the tombstone,
+        // we note this is a tombstone and we keeping
+        if (entry->key == NULL) {
+            if (IS_NIL(entry->value)) {
+                // empty entry
+                return tombstone != NULL ? tombstone : entry;
+            } else {
+                // we found the tombstone
+                if (tombstone == NULL) tombstone = entry;
+            }
+        } else if (entry->key == key) {
+            // we found the key
+            return entry;
+        }
         if (entry->key == key || entry->key == NULL) {
             return entry;
         }
 
         index = (index + 1) % capacity;
     }
+}
+
+bool tableGet(Table* table, ObjString* key, Value* value) {
+    if (table->count == 0) return false;  // this table is empty
+
+    Entry* entry = findEntry(table->entries, table->capacity, key);
+    if (entry->key == NULL) return false;
+
+    *value = entry->value;
+    return true;
 }
 
 static void adjustCapacity(Table* table, int capacity) {
@@ -43,6 +69,7 @@ static void adjustCapacity(Table* table, int capacity) {
         entries[i].value = NIL_VAL;
     }
 
+    table->count = 0;
     for (int i = 0; i < table->capacity; i++) {
         Entry* entry = &table->entries[i];
         if (entry->key == NULL) continue;
@@ -50,6 +77,7 @@ static void adjustCapacity(Table* table, int capacity) {
         Entry* dest = findEntry(entries, capacity, entry->key);
         dest->key = entry->key;
         dest->value = entry->value;
+        table->count++;
     }
 
     FREE_ARRAY(Entry, table->entries, table->capacity);
@@ -69,11 +97,27 @@ bool tableSet(Table* table, ObjString* key, Value value) {
 
     Entry* entry = findEntry(table->entries, table->capacity, key);
     bool isNewKey = entry->key == NULL;
-    if (isNewKey) table->count++;
+//    if (isNewKey) table->count++;
+    // this time we also count the tombstone into account
+    if (isNewKey && IS_NIL(entry->value)) table->count++;
 
     entry->key = key;
     entry->value = value;
     return isNewKey;
+}
+
+// we add a tombstone when we delete the k/v pair
+bool tableDelete(Table* table, ObjString* key) {
+    if (table->count == 0) return false;  // this table is empty
+
+    // find the entry
+    Entry* entry = findEntry(table->entries, table->capacity, key);
+    if (entry->key == NULL) return false;
+
+    // place a tombstone in the deleted entry
+    entry->key = NULL;
+    entry->value = BOOL_VAL(true);  // this tombstone
+    return true;
 }
 
 // copy all entries of one hash table into another
