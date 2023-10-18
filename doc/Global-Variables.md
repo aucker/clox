@@ -105,3 +105,27 @@ something a little more ambitious and get variables going. There are three opera
 
 ## Reading Variables
 
+## Assignment
+
+Our bytecode VM uses a single-pass compiler. It parses and generates bytecode on the fly without any intermediate AST. 
+As soon as it recognizes a piece of syntax, it emits code for it. Assignment doesn't naturally fit that. Consider:
+```shell
+menu.brunch(sunday).beverage = "mimosa";
+```
+In this code, the parser doesn't realize `menu.brunch(sunday).beverage` is the target of an assignment and not a normal
+expression until it reaches `=`, many tokens after the first `menu`. By then the compiler has already emitted bytecode 
+for the whole thing.
+
+The problem is not as dire as it might seem, though. Look at how the parser sees that example:
+![parser](../pic/parser-work.png)
+Even though the `.beverage` part must not be compiled as a get expression, everything to the left of the `.` is an 
+expression, with the normal expression semantics. The `menu.brunch(sunday)` part can be compiled and executed as usual.
+
+Fortunately for us, the only semantic differences on the left side of an assignment appear at the very right-most end of
+the tokens, immediately preceding the `=`. Even though the receiver of a setter may be an arbitrarily long expression,
+the part whose behavior differs from a get expression is only the trailing identifier, which is right before the `=`. We
+don't need much lookahead to realize `beverage` should be compiled as a set expression and not a getter.
+
+Variables are even easier since they are just a single bare identifier before an `=`. The idea then is that right 
+*before* compiling an expression that can also be used as an assignment target, we look for a subsequent `=` token. If 
+we see one, we compile it as an assignment or setter instead of a variable access or getter.
