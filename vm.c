@@ -35,9 +35,13 @@ static void runtimeError(const char *format, ...) {
 void initVM() {
     resetStack();
     vm.objects = NULL;
+    // when we spin up a new VM, the string table is empty
+    initTable(&vm.strings);
 }
 
 void freeVM() {
+    // when we shut down the VM, we clean up any resources used by the table.
+    freeTable(&vm.strings);
     freeObjects();
 }
 

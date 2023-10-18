@@ -7,6 +7,7 @@
 
 #include "memory.h"
 #include "object.h"
+#include "table.h"
 #include "value.h"
 #include "vm.h"
 
@@ -29,6 +30,12 @@ static ObjString* allocateString(char* chars, int length,
     string->length = length;
     string->chars = chars;
     string->hash = hash;
+    /*
+     * Some langs have a separate type or an explicit step to intern a string
+     * For clox, we automatically intern every one. which means whenever we
+     * create a new unique string, we add it to the table
+     */
+    tableSet(&vm.strings, string, NIL_VAL);
     return string;
 }
 
@@ -43,11 +50,28 @@ static uint32_t hashString(const char* key, int length) {
 
 ObjString* takeString(char* chars, int length) {
     uint32_t hash = hashString(chars, length);
+    ObjString* interned = tableFindString(&vm.strings, chars, length, hash);
+
+    if (interned != NULL) {
+        FREE_ARRAY(char, chars, length + 1);
+        return interned;
+    }
     return allocateString(chars, length);
 }
 
 ObjString* copyString(const char* chars, int length) {
     uint32_t hash = hashString(chars, length);
+    /*
+     * we need to check for duplicate before we get here.
+     * we do that in the two higher-level funcs that call `allocateString()`.
+     *
+     * when cp a string into a new LoxString, we look it up in the string table first
+     * if found, instead of copying, we just return a reference to that string.
+     * otherwise, we fall through, allocate new string and store it in the string table
+     */
+    ObjString* interned = tableFindString(&vm.strings, chars, length, hash);
+    if (interned != NULL) return interned;
+
     char* heapChars = ALLOCATE(char, length + 1);
     memcpy(heapChars, chars, length);
     heapChars[length] = '\0';
