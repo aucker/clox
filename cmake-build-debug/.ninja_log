@@ -10,3 +10,13 @@
 14	137	7192367638166662	CMakeFiles/clox.dir/scanner.c.obj	924e2a9854f396d9
 1	154	7192867365177139	build.ninja	52447c63f8d7683c
 25	136	7192843894808329	CMakeFiles/clox.dir/object.c.obj	567f2e7b68335b89
+35	257	7193378211952534	CMakeFiles/clox.dir/table.c.obj	f980c2d9c2edad6f
+15	257	7193378211952534	CMakeFiles/clox.dir/value.c.obj	7dbae6f8d65be0d4
+7	258	7193378211952534	CMakeFiles/clox.dir/chunk.c.obj	9f932dc34881edf7
+2	259	7193378211972614	CMakeFiles/clox.dir/main.c.obj	a8ddc3711ceb54eb
+12	259	7193378211972614	CMakeFiles/clox.dir/memory.c.obj	ee715a25231d528d
+19	260	7193378211982515	CMakeFiles/clox.dir/debug.c.obj	8c7bc1554395ddad
+23	260	7193378211982515	CMakeFiles/clox.dir/compiler.c.obj	dacf6091067e1b47
+27	261	7193378211993309	CMakeFiles/clox.dir/vm.c.obj	2c170a43967ddc3d
+1	75	7193379025514845	CMakeFiles/clox.dir/object.c.obj	567f2e7b68335b89
+76	358	7193379028290581	clox.exe	5d88565b51f31db1

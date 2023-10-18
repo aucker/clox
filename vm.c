@@ -186,9 +186,19 @@ static InterpretResult run() {
                 }
                 push(NUMBER_VAL(-AS_NUMBER(pop())));
                 break;
-            case OP_RETURN: {
+            case OP_PRINT:
+                /*
+                 * When the interpreter reaches this instruction, it has already executed
+                 * the code for the expression, leaving the result value on top of the
+                 * stack. Now we simply pop and print it.
+                 */
                 printValue(pop());
                 printf("\n");
+                break;
+            case OP_RETURN: {
+//                printValue(pop());
+//                printf("\n");
+                // Exit interpreter
                 return INTERPRET_OK;
             }
         }

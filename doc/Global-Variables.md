@@ -77,3 +77,19 @@ statement        -> exprStmt
 declaration      -> varDecl
                   | statement ;          
 ```
+
+### *Print statement*
+
+Note that we don't push anything else after that. This is a key difference between expressions and statements in the VM.
+Every bytecode instruction has a **stack effect** that describe how the instruction modifies the stack. E.g., `OP_ADD` 
+pops two values and pushes one, leaving the stack one element smaller than before.
+
+You can sum the stack effects of a series of instructions to get their total effect. When you add the stack effects of 
+the series of instructions compiled from any complete expression, it will total one. Each expression leaves one result 
+value on the stack.
+
+![stack effect](../pic/stack-effect.png)
+The bytecode for an entire statement has a total stack effect of zero. Since a statement produces no values, it 
+ultimately leaves the stack unchanged, though it of course uses the stack while it's doing its thing. This is important
+because when we get to control flow and looping, a program might execute a long series of statements. If each statement
+grew or shrank the stack, it might eventually overflow or underflow.
