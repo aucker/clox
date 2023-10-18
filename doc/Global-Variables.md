@@ -93,3 +93,13 @@ The bytecode for an entire statement has a total stack effect of zero. Since a s
 ultimately leaves the stack unchanged, though it of course uses the stack while it's doing its thing. This is important
 because when we get to control flow and looping, a program might execute a long series of statements. If each statement
 grew or shrank the stack, it might eventually overflow or underflow.
+
+## Variable Declarations
+
+Merely being able to *print* doesn't win your language any prizes at the programming language fair, so let's move on to
+something a little more ambitious and get variables going. There are three operations we need to support:
+
+* Declaring a new variable using a `var` statement
+* Accessing the value of a variable using an identifier expression
+* Storing a new value in an existing variable using an assignment expression.
+
