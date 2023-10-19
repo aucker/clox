@@ -98,3 +98,43 @@ case, we return `-1` to signal that it wasn't found and should be assumed to be 
 
 ### *Interpreting local variables*
 
+### *Another scope edge case*
+
+We already sunk some time into handling a couple of weird edge cases around scopes. We made sure shadowing works 
+correctly. We report an error if two variables in the same local scope have the same name. For reasons that aren't 
+entirely clear to me, variable scoping seems to have a lot of these wrinkles. I've never seen a language where it feels
+completely elegant.
+
+We've got one more edge case to deal with before we end this chapter. Recall this strange beastie we first met in 
+[jlox's implementation of variable resolution](http://www.craftinginterpreters.com/resolving-and-binding.html#resolving-variable-declarations)
+:
+```shell
+{
+  var a = "outer";
+  {
+    var a = a;
+  }
+}
+```
+We slayed it then by splitting a variable's declaration into two phases, and we'll do that again here:
+![variable-declaration](../pic/variable-declaration.png)
+
+As soon as the variable declaration begins - in other words, before its initializer - the name is declared in the 
+current scope. The variable exists, but in a special "uninitialized" state. Then we compile the initializer. If at any
+point in that expression we resolve an identifier that points back to this variable, we'll see that it is not 
+initialized yet and report an error. After we finish compiling the initializer, we makr the variable as initialized and 
+ready for use.
+
+
+
+If the variable has the sentinel depth, it must be a reference to a variable in its own initializer, and we report that 
+as an error.
+
+That's it for this chapter! We added blocks, local variables and real, honest-to-God lexical scoping. Given that we
+introduce an entirely different runtime representation for variables, we didn't have to write a lot of code. The 
+implementation ended up being pretty clean and efficient.
+
+Over in the runtime, it's just two little instructions. You'll see this as a continuing trend in clox compared to jlox.
+One of the biggest hammers in the optimizer's toolbox is pulling work forward into the compiler so that you don't have 
+to do it at runtime. In this chapter, that means resolving exactly which stack slot every local variable occupies. That 
+way, at runtime, no lookup or resolution needs to happen.
