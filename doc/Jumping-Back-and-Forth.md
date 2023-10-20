@@ -135,5 +135,19 @@ bytes, and we've got the opcode space available, so why not use it?
 
 The `while` statement contains two jumps - a conditional forward one to escape the loop when the condition is not met, 
 and an unconditional loop backward after we have executed the body. The flow looks like this:
+
 ![while-stmt-flow](../pic/while-statement-flow.png)
+
+## For Statements
+
+The other looping statement in Lox is the venerable `for` loop, inherited from C. It's got a lot more going on with it
+compared to a `while` loop. It has three clauses, all of which are optional:
+
+* The initializer can be a variable declaration or an expression. It runs once at the beginning of the statement.
+* The condition clause is an expression. Like in a `while` loop, we exit the loop when it evaluates to something falsey.
+* The increment expression runs once at the end of each loop iteration.
+
+In jlox, the parser desugared a `for` loop to a synthesized AST for a `while` loop with some extra stuff before it and
+at the end of the body. We'll do something similar, though we won't go through anything like an AST. Instead, our 
+bytecode compiler will use the jump and loop instructions we already have.
 
