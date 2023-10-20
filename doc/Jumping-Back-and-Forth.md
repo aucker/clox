@@ -104,3 +104,25 @@ This isn't the best way to do this. There are more instructions to dispatch and 
 why `or` should be slower than `and`. But it is kind of fun to see that it's possible to implement both operators w/o
 adding any new instructions.
 
+
+## While Statements
+
+That takes us to the *looping* statements, which jump *backward* so that code cna be executed more than once. Lox only 
+has two loop constructs, `while` and `for`. A `while` loop is (much) simpler, so ew start the party here.
+
+
+
+The `emitLoop()` is a bit like `emitJump()` and `patchJump()` combined. It emits a new loop instruction, which 
+conditionally jumps *backwards* by a given offset. Like the jump instructions, after that we have a 16-bit operand. We 
+calculate the offset from the instruction we're currently at to the `loopStart` point that we want to jump back to. The 
+`+ 2` is to take into account the size of the `OP_LOOP` instruction's own operands which we also need to jump over.
+
+From the VM's perspective, there really is no semantic difference between `OP_LOOP` and `OP_JUMP`. Both just add an 
+offset to the `ip`. We could have used a single instruction for both and given it a signed offset operand. But I figured
+it was a little easier to sidestep the annoying bit twiddling required to manually pack a signed 16-bit integer into two
+bytes, and we've got the opcode space available, so why not use it?
+
+
+The `while` statement contains two jumps - a conditional forward one to escape the loop when the condition is not met, 
+and an unconditional loop backward after we have executed the body. The flow looks like this:
+![while-stmt-flow](../pic/while-statement-flow.png)
