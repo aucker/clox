@@ -173,3 +173,26 @@ Unfortunately, we can't compile the increment clause later, since our compiler o
 Instead, we'll *jump over* the increment, run the body, jump *back* up to the increment, run it, and then go to the next
 iteration.
 
+Since this the last clause, when omitted, the next token will be the closing parenthesis. When an increment is present,
+we need to compile it now, but it shouldn't execute yet. So, first, we emit an unconditional jump that hops over the 
+increment clause's code to the body of the loop.
+
+Next, we compile the increment expression itself. This is usually an assignment. Whatever it is, we only execute it for
+its side effect, so we also emit a pop to discard its value.
+
+The last part is a little tricky. First, we emit a loop instruction. This is the main loop that takes us back to the top
+of the `for` loop - right before the condition expression if there is one. That loop happens right after the increment,
+since the increment executes at the end of each loop iteration.
+
+Then we change `loopStart` to point to the offset where the increment expression begins. Later, when we emit the loop
+instruction after the body statement, this will cause it to jump up to the *increment* expression instead of the top of 
+the loop like it does when there is no increment. This is how we weave the increment in to run after the body.
+
+It's convoluted, but it all works out. A complete loop with all the clauses compiles to a flow like this:
+
+![for-statement-flow](../pic/for-statement-flow.png)
+
+As with implementing `for` loops in jlox, we didn't need to touch the runtime. It all gets compiled down to primitive 
+control flow operations the VM already supports. In this chapter, we've taken a big leap forward - clox is now 
+**Turing complete**. We've also covered quite a bit of new syntax: three statements and two expression forms. Even so,
+it only took three new simple instructions. That's a pretty good effort-to-reward ratio for the architecture of our VM.
