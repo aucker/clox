@@ -37,3 +37,32 @@ Note that the jump instruction doesn't pop the condition value off the stack. So
 leaves an extra value floating around on the stack. We'll clean that up soon. Ignoring that for the moment, we do have 
 a working `if` statement in Lox now, with only one little instruction required to support it at runtime in the VM.
 
+### *Else clauses*
+
+An `if` statement without support for `else` clauses is like Morticia Addams w/o Gomez. So, after we compile the then
+branch, we look for an `else` keyword. If we find one, we compile the else branch.
+
+
+When the condition is falsey, we'll jump over the then branch. If there's an else branch, the `ip` will land at the 
+beginning of its code. But that's not enough, though. Here's the flow that leads to:
+![ELSE_CLAUSE](../pic/ELSE_CLAUSE.png)
+If the condition is truthy, we execute the then branch like we want. But after that, execution rolls right on through 
+into the else branch. Oops! When the condition is true, after we run the then branch, we need to jump over the else 
+branch. That way, in either case, we only execute a single branch, like this:
+![EXECUTE_ELSE](../pic/EXECUTE_ELSE.png)
+
+
+Compared with `OP_JUMP_IF_FALSE`, the `OP_JUMP` doesn't check a condition and always applies the offset.
+
+We have then and else branches working now, so we're close. The last bit is to clean up that condition value we left on
+the stack. Remember, each statement is required to have zero stack effect - after the statement is finished executing, 
+the stack should be as tall as it was before.
+
+We could have the `OP_JUMP_IF_FALSE` instruction pop the condition itself, but soon we'll use that same instruction for 
+the logical operators where we don't want the condition popped. Instead, we'll have the compiler emit a couple of 
+explicit `OP_POP` instructions when compiling an `if` statement. We need to take care that every execution path through
+the generated code pops the condition.
+
+
+The full correct flow looks like this:
+![flow](../pic/ELSE_FLOW.png)
