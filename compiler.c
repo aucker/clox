@@ -395,15 +395,66 @@ static void expressionStatement() {
 }
 
 static void forStatement() {
+    beginScope();
     consume(TOKEN_LEFT_PAREN, "Expect '(' after 'for'.");
     consume(TOKEN_SEMICOLON, "Expect ';'.");
+    if (match(TOKEN_SEMICOLON)) {
+        // No initializer.
+    } else if (match(TOKEN_VAR)) {
+        varDeclaration();
+    } else {
+        expressionStatement();
+    }
 
     int loopStart = currentChunk()->count;
-    consume(TOKEN_SEMICOLON, "Expect ';'");
-    consume(TOKEN_RIGHT_PAREN, "Expect ')' after for clauses.");
+//    consume(TOKEN_SEMICOLON, "Expect ';'");
+    int exitJump = -1;
+    /*
+     * Since the clause is optional, we need to see if it's actually present.
+     * If the clause is omitted, the next token must be a semicolon, so we
+     * look for that to tell. If there isn't a semicolon, there must be a
+     * condition expression.
+     *
+     * In that case, we compile it. Then, just like with while, we emit a conditional
+     * jump that exits the loop if the condition is falsey. Since the jump leaves
+     * the value on the stack, we pop it before executing the body. That ensures
+     * we discard the value when the condition is true.
+     */
+    if (!match(TOKEN_SEMICOLON)) {
+        expression();
+        consume(TOKEN_SEMICOLON, "Expect ';' after loop condition.");
+
+        // Jump out of the loop if the condition is false.
+        exitJump = emitJump(OP_JUMP_IF_FALSE);
+        emitByte(OP_POP); // Condition
+    }
+//    consume(TOKEN_RIGHT_PAREN, "Expect ')' after for clauses.");
+
+    /*
+     * It's optional. Since this is the last clause, when omitted, the next token will be
+     * the closing parenthesis. When an increment is present, we need to compile it now,
+     * but it shouldn't execute yet.
+     */
+    if (!match(TOKEN_RIGHT_PAREN)) {
+        int bodyJump = emitJump(OP_JUMP);
+        int incrementStart = currentChunk()->count;
+        expression();
+        emitByte(OP_POP);
+        consume(TOKEN_RIGHT_PAREN, "Expect ')' after for clause.");
+
+        emitLoop(loopStart);
+        loopStart = incrementStart;
+        patchJump(bodyJump);
+    }
 
     statement();
     emitLoop(loopStart);
+
+    if (exitJump != -1) {
+        patchJump(exitJump);
+        emitByte(OP_POP);  // Condition.
+    }
+    endScope();
 }
 
 static void ifStatement() {

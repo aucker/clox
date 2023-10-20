@@ -151,3 +151,25 @@ In jlox, the parser desugared a `for` loop to a synthesized AST for a `while` lo
 at the end of the body. We'll do something similar, though we won't go through anything like an AST. Instead, our 
 bytecode compiler will use the jump and loop instructions we already have.
 
+
+### *Initializer clause*
+
+We use the presence of the `var` keyword to tell which we have. For the expression case, we call `expressionStatement()`
+instead of `expression()`. That looks for a semicolon, which we need here too, and also emits an `OP_POP` instruction to
+discard the value. We don't want the initializer to leave anything on the stack.
+
+If a `for` statement declares a variable, that variable should be scoped to the loop body. We ensure that by wrapping 
+the whole statement in a scope.
+
+### *Condition clause*
+
+### *Increment clause*
+
+It's pretty convoluted. It appears textually before the body, but executes *after* it. If we parsed to an AST and 
+generated code in a separate pass, we could simply traverse into and compile the `for` statement AST's body field before
+its increment clause.
+
+Unfortunately, we can't compile the increment clause later, since our compiler only makes a single pass over the code. 
+Instead, we'll *jump over* the increment, run the body, jump *back* up to the increment, run it, and then go to the next
+iteration.
+
