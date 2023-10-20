@@ -14,7 +14,9 @@ top of the stack. We'll use that to determine whether to execute the then branch
 
 Then we emit a new `OP_JUMP_IF_FALSE` instruction. It has an operand for how much to offset the `ip` - how many bytes of
 code to skip. If the condition is falsey, it adjusts the `ip` by that amount. Something like this:
+
 ![or_jump_if_false](../pic/OR_JUMP_IF_FALSE.png)
+
 But we have a problem. When we're writing the `OP_JUMP_IF_FALSE` instruction's operand, how do we know how far to jump?
 We haven't compiled the then branch yet, so we don't know how much bytecode it contains.
 
@@ -22,6 +24,7 @@ To fix that, we use a classic trick called **backpatching**. We emit the jump in
 offset operand. We keep track of where that half-finished instruction is. Next, we compile the then body. Once that's 
 done, we know how far to jump. So we go back and replace that placeholder offset with the real one now that we can 
 calculate it. Sort of like sewing a patch onto the existing fabric of the compiled code.
+
 ![backpatching](../pic/backpatching.png)
 
 
@@ -45,10 +48,13 @@ branch, we look for an `else` keyword. If we find one, we compile the else branc
 
 When the condition is falsey, we'll jump over the then branch. If there's an else branch, the `ip` will land at the 
 beginning of its code. But that's not enough, though. Here's the flow that leads to:
+
 ![ELSE_CLAUSE](../pic/ELSE_CLAUSE.png)
+
 If the condition is truthy, we execute the then branch like we want. But after that, execution rolls right on through 
 into the else branch. Oops! When the condition is true, after we run the then branch, we need to jump over the else 
 branch. That way, in either case, we only execute a single branch, like this:
+
 ![EXECUTE_ELSE](../pic/EXECUTE_ELSE.png)
 
 
@@ -65,6 +71,7 @@ the generated code pops the condition.
 
 
 The full correct flow looks like this:
+
 ![flow](../pic/ELSE_FLOW.png)
 
 
@@ -85,7 +92,9 @@ operand and leave the left-hand side value as the result of the entire expressio
 value and evaluate the right operand which becomes the result of the whole `and` expression.
 
 Those four lines of code right there produce exactly that. The flow looks like this:
+
 ![new-flow](../pic/new_flow.png)
+
 Now you can see why `OP_JUMP_IF_FALSE` leaves the value on top of the stack. When the left-hand side of the `and` is 
 falsey, that value sticks around to become the result of the entire expression.
 
@@ -98,6 +107,7 @@ semantics to whatever instruction sequence it wants, I implemented it in terms o
 When the left-hand side is falsey, it does a tiny jump over the next statement. That statement is an unconditional jump
 over the code for the right operand. This little dance effectively does a jump when the value is truthy. The flow looks
 like this:
+
 ![logical_flow](../pic/logical_flow.png)
 
 This isn't the best way to do this. There are more instructions to dispatch and more overhead. There's no good reason
@@ -126,3 +136,4 @@ bytes, and we've got the opcode space available, so why not use it?
 The `while` statement contains two jumps - a conditional forward one to escape the loop when the condition is not met, 
 and an unconditional loop backward after we have executed the body. The flow looks like this:
 ![while-stmt-flow](../pic/while-statement-flow.png)
+
