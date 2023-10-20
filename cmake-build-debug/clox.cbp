@@ -106,10 +106,22 @@
 		<Unit filename="/Users/aucker/Develop/clox/memory.h">
 			<Option target="clox"/>
 		</Unit>
+		<Unit filename="/Users/aucker/Develop/clox/object.c">
+			<Option target="clox"/>
+		</Unit>
+		<Unit filename="/Users/aucker/Develop/clox/object.h">
+			<Option target="clox"/>
+		</Unit>
 		<Unit filename="/Users/aucker/Develop/clox/scanner.c">
 			<Option target="clox"/>
 		</Unit>
 		<Unit filename="/Users/aucker/Develop/clox/scanner.h">
+			<Option target="clox"/>
+		</Unit>
+		<Unit filename="/Users/aucker/Develop/clox/table.c">
+			<Option target="clox"/>
+		</Unit>
+		<Unit filename="/Users/aucker/Develop/clox/table.h">
 			<Option target="clox"/>
 		</Unit>
 		<Unit filename="/Users/aucker/Develop/clox/value.c">

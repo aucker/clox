@@ -66,3 +66,40 @@ the generated code pops the condition.
 
 The full correct flow looks like this:
 ![flow](../pic/ELSE_FLOW.png)
+
+
+## Logical Operators
+
+You probably remember this from jlox, but the logical operators `and` and `or` aren't just another pair of binary 
+operators like `+` and `-`. Because they short-circuit and may not evaluate their right operand depending on the value 
+of the left one, they work more like control flow expression.
+
+They're basically a little variation on an `if` statement with an `else` clause. The easiest way to explain them is to 
+just show you the compiler code and the control flow it produces in the resulting bytecode. Starting with `and`, we hook
+it into the expression parsing table.
+
+
+At the point this is called, the left-hand side expression has already been compiled. That means at runtime, its value 
+will be on top of the stack. If that value is falsey, then we know the entire `and` must be false, so we skip the right 
+operand and leave the left-hand side value as the result of the entire expression. Otherwise, we discard the left-hand
+value and evaluate the right operand which becomes the result of the whole `and` expression.
+
+Those four lines of code right there produce exactly that. The flow looks like this:
+![new-flow](../pic/new_flow.png)
+Now you can see why `OP_JUMP_IF_FALSE` leaves the value on top of the stack. When the left-hand side of the `and` is 
+falsey, that value sticks around to become the result of the entire expression.
+
+### *Logical or operator*
+
+In an `or` expression, if the left-hand side is *truthy*, then we skip over the right operand. Thus we need to jump when
+a value is truthy. We could add a separate instruction, but just to show how our compiler is free to map the language's
+semantics to whatever instruction sequence it wants, I implemented it in terms of the jump instructions we already have.
+
+When the left-hand side is falsey, it does a tiny jump over the next statement. That statement is an unconditional jump
+over the code for the right operand. This little dance effectively does a jump when the value is truthy. The flow looks
+like this:
+![logical_flow](../pic/logical_flow.png)
+
+This isn't the best way to do this. There are more instructions to dispatch and more overhead. There's no good reason
+why `or` should be slower than `and`. But it is kind of fun to see that it's possible to implement both operators w/o
+adding any new instructions.
