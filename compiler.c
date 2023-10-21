@@ -746,7 +746,7 @@ static ParseRule* getRule(TokenType type) {
 
 //void compile(const char* source) {
 //bool compile(const char* source, Chunk* chunk) {
-ObjFunction* compile(const char* source, Chunk* chunk) {
+ObjFunction* compile(const char* source) {
     initScanner(source);
 //    int line = -1;
 //    for (;;) {
