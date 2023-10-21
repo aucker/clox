@@ -15,3 +15,25 @@ This is roughly how compilation to native code works where you end up with one s
 bytecode VM, we can do something a little higher level. I think a cleaner model is to give each function its own Chunk.
 We'll want some other metadata too, so let's go ahead and stuff it all in a struct now.
 
+
+## Compiling to Function Objects
+
+Right now, our compiler assumes it is always compiling to one single chunk. With each function's code living in separate
+chunks, that gets more complex. When the compiler reaches a function declaration, it needs to emit code into the 
+function's chunk when compiling its body. At the end of the function body, the compiler needs to return to the previous
+chunk it was working with.
+
+That's fine for code inside function bodies, but what about code that isn't? The "top level" of a Lox program is also 
+imperative code and we need a chunk to compile that into. We can simplify the compiler and VM by placing that top-level
+code inside an automatically defined function too. That way, the compiler is always within some kind of function body,
+and the VM always runs code by invoking a function. It's as if the entire program is wrapped inside an implicit `main()`
+function.
+
+
+
+We get the function object from the compiler. If there were no compiler errors, we return it. Otherwise, we signal an 
+error by returning `NULL`. This way, the VM doesn't try to execute a function that may contain invaild bytecode.
+
+Eventually, we will update `interpret()` to handle the new declaration of `compile()`, but first we have some other 
+changes to make.
+

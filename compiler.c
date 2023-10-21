@@ -54,7 +54,21 @@ typedef struct {
     int depth;
 } Local;
 
+/*
+ * This lets the compiler tell when it's compiling top-level code
+ * versus the body of a function. Most of the compiler doesn't care
+ * about this - that's why it's a useful abstraction - but in one or
+ * two places the distinction is meaningful.
+ */
+typedef enum {
+    TYPE_FUNCTION,
+    TYPE_SCRIPT,
+} FunctionType;
+
 typedef struct {
+    ObjFunction* function;
+    FunctionType type;
+
     Local locals[UINT8_COUNT];
     int localCount;
     int scopeDepth;
@@ -62,10 +76,14 @@ typedef struct {
 
 Parser parser;
 Compiler* current = NULL;
-Chunk* compilingChunk;
+//Chunk* compilingChunk;
+//
+//static Chunk* currentChunk() {
+//    return compilingChunk;
+//}
 
 static Chunk* currentChunk() {
-    return compilingChunk;
+    return &current->function->chunk;
 }
 
 static void errorAt(Token* token, const char* message) {
@@ -182,19 +200,35 @@ static void patchJump(int offset) {
     currentChunk()->code[offset + 1] = jump & 0xff;
 }
 
-static void initCompiler(Compiler* compiler) {
+//static void initCompiler(Compiler* compiler) {
+static void initCompiler(Compiler* compiler, FunctionType type) {
+    compiler->function = NULL;
+    compiler->type = type;
     compiler->localCount = 0;
     compiler->scopeDepth = 0;
+    compiler->function = newFunction();
     current = compiler;
+
+    Local* local = &current->locals[current->localCount++];
+    local->depth = 0;
+    local->name.start = "";
+    local->name.length = 0;
 }
 
-static void endCompiler() {
+//static void endCompiler() {
+static ObjFunction* endCompiler() {
     emitReturn();
+    ObjFunction* function = current->function;
+
 #ifdef DEBUG_PRINT_CODE
     if (!parser.hadError) {
-        disassembleChunk(currentChunk(), "code");
+//        disassembleChunk(currentChunk(), "code");
+        disassembleChunk(currentChunk(), function->name != NULL
+                         ? function->name->chars : "<script>");
     }
 #endif
+
+    return function;
 }
 
 static void beginScope() {
@@ -711,7 +745,8 @@ static ParseRule* getRule(TokenType type) {
 
 
 //void compile(const char* source) {
-bool compile(const char* source, Chunk* chunk) {
+//bool compile(const char* source, Chunk* chunk) {
+ObjFunction* compile(const char* source, Chunk* chunk) {
     initScanner(source);
 //    int line = -1;
 //    for (;;) {
@@ -727,8 +762,9 @@ bool compile(const char* source, Chunk* chunk) {
 //        if (token.type == TOKEN_EOF) break;
 //    }
     Compiler compiler;
-    initCompiler(&compiler);
-    compilingChunk = chunk;
+//    initCompiler(&compiler);
+//    compilingChunk = chunk;
+    initCompiler(&compiler, TYPE_SCRIPT);
 
     parser.hadError = false;
     parser.panicMode = false;
@@ -741,6 +777,8 @@ bool compile(const char* source, Chunk* chunk) {
         declaration();
     }
 
-    endCompiler();
-    return !parser.hadError;
+//    endCompiler();
+    ObjFunction* function = endCompiler();
+//    return !parser.hadError;
+    return parser.hadError ? NULL : function;
 }

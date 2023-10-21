@@ -9,6 +9,7 @@
 #include "vm.h"
 
 //void compile(const char* source);
-bool compile(const char* source, Chunk* chunk);
+//bool compile(const char* source, Chunk* chunk);
+ObjFunction* compile(const char* source);
 
 #endif//CLOX_COMPILER_H
