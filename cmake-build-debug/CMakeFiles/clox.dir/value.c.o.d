@@ -41,7 +41,7 @@ CMakeFiles/clox.dir/value.c.o: /Users/aucker/Develop/clox/value.c \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/strings.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/secure/_strings.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/secure/_string.h \
-  /Users/aucker/Develop/clox/object.h \
+  /Users/aucker/Develop/clox/object.h /Users/aucker/Develop/clox/chunk.h \
   /Users/aucker/Develop/clox/common.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include/stdbool.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include/stddef.h \
@@ -53,5 +53,4 @@ CMakeFiles/clox.dir/value.c.o: /Users/aucker/Develop/clox/value.c \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/_types/_uint64_t.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/_types/_intmax_t.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/_types/_uintmax_t.h \
-  /Users/aucker/Develop/clox/chunk.h /Users/aucker/Develop/clox/value.h \
-  /Users/aucker/Develop/clox/memory.h
+  /Users/aucker/Develop/clox/value.h /Users/aucker/Develop/clox/memory.h
