@@ -72,6 +72,33 @@ static Value peek(int distance) {
     return vm.stackTop[-1 - distance];
 }
 
+/*
+ * This is the helper function in callValue()
+ * because Lox is dynamically typed, so we have to report
+ * the type error ourselves
+ */
+static bool call(ObjFunction* function, int argCount) {
+    CallFrame* frame = &vm.frames[vm.frameCount++];
+    frame->function = function;
+    frame->ip = function->chunk.code;
+    frame->slots = vm.stackTop - argCount - 1;
+    return true;
+}
+
+// this is the helper function in run() func
+static bool callValue(Value callee, int argCount) {
+    if (IS_OBJ(callee)) {
+        switch (OBJ_TYPE(callee)) {
+            case OBJ_FUNCTION:
+                return call(AS_FUNCTION(callee), argCount);
+            default:
+                break; // Non-callable object type.
+        }
+    }
+    runtimeError("Can only call functions and classes");
+    return false;
+}
+
 static bool isFalsey(Value value) {
     return IS_NIL(value) || (IS_BOOL(value) && !AS_BOOL(value));
 }
@@ -286,6 +313,19 @@ static InterpretResult run() {
                 frame->ip -= offset;
                 break;
             }
+            case OP_CALL: {
+                int argCount = READ_BYTE();
+                if (!callValue(peek(argCount), argCount)) {
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+                /*
+                 * If callValue() is successful, there will be a new frame on the
+                 * CallFrame stack for the called function. The run() func has its
+                 * own cached pointer to the current frame. we need to update it.
+                 */
+                frame = &vm.frames[vm.frameCount - 1];
+                break;
+            }
             case OP_RETURN: {
                 //                printValue(pop());
                 //                printf("\n");
@@ -326,10 +366,12 @@ InterpretResult interpret(const char *source) {
     if (function == NULL) return INTERPRET_COMPILE_ERROR;
 
     push(OBJ_VAL(function));
-    CallFrame* frame = &vm.frames[vm.frameCount++];
-    frame->function = function;
-    frame->ip = function->chunk.code;
-    frame->slots = vm.stack;
+
+    call(function, 0);
+//    CallFrame* frame = &vm.frames[vm.frameCount++];
+//    frame->function = function;
+//    frame->ip = function->chunk.code;
+//    frame->slots = vm.stack;
 
 //    InterpretResult result = run();
 //
