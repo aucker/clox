@@ -70,6 +70,6 @@ CMakeFiles/clox.dir/memory.c.o: /Users/aucker/Develop/clox/memory.c \
   /Users/aucker/Develop/clox/common.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include/stdbool.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include/stddef.h \
-  /Users/aucker/Develop/clox/object.h /Users/aucker/Develop/clox/value.h \
-  /Users/aucker/Develop/clox/vm.h /Users/aucker/Develop/clox/chunk.h \
+  /Users/aucker/Develop/clox/object.h /Users/aucker/Develop/clox/chunk.h \
+  /Users/aucker/Develop/clox/value.h /Users/aucker/Develop/clox/vm.h \
   /Users/aucker/Develop/clox/table.h

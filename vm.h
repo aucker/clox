@@ -1,6 +1,9 @@
 //
 // Created by aucker on 10/7/2023.
 //
+#ifndef CLOX_VM_H
+#define CLOX_VM_H
+
 
 //#include "chunk.h"
 #include "object.h"
@@ -16,9 +19,6 @@ typedef struct {
     uint8_t* ip;
     Value* slots;
 } CallFrame;
-
-#ifndef CLOX_VM_H
-#define CLOX_VM_H
 
 
 /*

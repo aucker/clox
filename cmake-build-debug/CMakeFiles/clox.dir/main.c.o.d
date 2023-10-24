@@ -86,4 +86,5 @@ CMakeFiles/clox.dir/main.c.o: /Users/aucker/Develop/clox/main.c \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include/stdbool.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include/stddef.h \
   /Users/aucker/Develop/clox/value.h /Users/aucker/Develop/clox/debug.h \
-  /Users/aucker/Develop/clox/vm.h /Users/aucker/Develop/clox/table.h
+  /Users/aucker/Develop/clox/vm.h /Users/aucker/Develop/clox/object.h \
+  /Users/aucker/Develop/clox/table.h

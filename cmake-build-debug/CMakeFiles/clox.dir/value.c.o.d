@@ -53,4 +53,5 @@ CMakeFiles/clox.dir/value.c.o: /Users/aucker/Develop/clox/value.c \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/_types/_uint64_t.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/_types/_intmax_t.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/_types/_uintmax_t.h \
-  /Users/aucker/Develop/clox/value.h /Users/aucker/Develop/clox/memory.h
+  /Users/aucker/Develop/clox/chunk.h /Users/aucker/Develop/clox/value.h \
+  /Users/aucker/Develop/clox/memory.h
