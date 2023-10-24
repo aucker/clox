@@ -78,6 +78,19 @@ static Value peek(int distance) {
  * the type error ourselves
  */
 static bool call(ObjFunction* function, int argCount) {
+    if (argCount != function->arity) {  // we check the arity here
+        runtimeError("Expected %d arguments but got $d.",
+                     function->arity, argCount);
+        return false;
+    }
+
+    // because CallFrame has a fixed size, we need to ensure a deep call
+    // chain doesn't overflow it.
+    if (vm.frameCount == FRAMES_MAX) {  // we check CallFrame array here
+        runtimeError("Stack overflows.");
+        return false;
+    }
+
     CallFrame* frame = &vm.frames[vm.frameCount++];
     frame->function = function;
     frame->ip = function->chunk.code;
