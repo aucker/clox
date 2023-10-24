@@ -6,8 +6,8 @@
 #include "common.h"
 #include "compiler.h"
 #include "debug.h"
-#include "object.h"
 #include "memory.h"
+#include "object.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -17,6 +17,7 @@ VM vm;
 static void resetStack() {
     // free the stack, now empty
     vm.stackTop = vm.stack;
+    vm.frameCount = 0;
 }
 
 static void runtimeError(const char *format, ...) {
@@ -26,8 +27,11 @@ static void runtimeError(const char *format, ...) {
     va_end(args);
     fputs("\n", stderr);
 
-    size_t instruction = vm.ip - vm.chunk->code - 1;
-    int line = vm.chunk->lines[instruction];
+//    size_t instruction = vm.ip - vm.chunk->code - 1;
+//    int line = vm.chunk->lines[instruction];
+    CallFrame* frame = &vm.frames[vm.frameCount - 1];
+    size_t instruction = frame->ip - frame->function->chunk.code - 1;
+    int line = frame->function->chunk.lines[instruction];
     fprintf(stderr, "[line %d] in script\n", line);
     resetStack();
 }
@@ -73,23 +77,33 @@ static bool isFalsey(Value value) {
 }
 
 static void concatenate() {
-    ObjString* b = AS_STRING(pop());
-    ObjString* a = AS_STRING(pop());
+    ObjString *b = AS_STRING(pop());
+    ObjString *a = AS_STRING(pop());
 
     int length = a->length + b->length;
-    char* chars = ALLOCATE(char, length + 1);
+    char *chars = ALLOCATE(char, length + 1);
     memcpy(chars, a->chars, a->length);
     memcpy(chars + a->length, b->chars, b->length);
     chars[length] = '\0';
 
-    ObjString* result = takeString(chars, length);
+    ObjString *result = takeString(chars, length);
     push(OBJ_VAL(result));
 }
 
 static InterpretResult run() {
-#define READ_BYTE() (*vm.ip++)
-#define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()])
+    CallFrame *frame = &vm.frames[vm.frameCount - 1];
+
+#define READ_BYTE() (*frame->ip++)
+
 #define READ_SHORT() \
+    (frame->ip += 2, \
+     (uint16_t) ((frame->ip[-2] << 8) | frame->ip[-1]))
+
+#define READ_CONSTANT() \
+    (frame->function->chunk.constants.values[READ_BYTE()])
+//#define READ_BYTE() (*vm.ip++)
+//#define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()])
+//#define READ_SHORT() \
     (vm.ip += 2, (uint16_t)((vm.ip[-2] << 8) | vm.ip[-1]))
 #define READ_STRING() AS_STRING(READ_CONSTANT())
     /*
@@ -129,8 +143,10 @@ static InterpretResult run() {
             printf(" ]");
         }
         printf("\n");
-        disassembleInstruction(vm.chunk,
-                               (int) (vm.ip - vm.chunk->code));
+//        disassembleInstruction(vm.chunk,
+//                               (int) (vm.ip - vm.chunk->code));
+        disassembleInstruction(&frame->function->chunk,
+                               (int)(frame->ip - frame->function->chunk.code));
 #endif
         uint8_t instruction;
         switch (instruction = READ_BYTE()) {
@@ -141,18 +157,28 @@ static InterpretResult run() {
                 push(constant);
                 break;
             }
-            case OP_NIL: push(NIL_VAL); break;
-            case OP_TRUE: push(BOOL_VAL(true)); break;
-            case OP_FALSE: push(BOOL_VAL(false)); break;
-            case OP_POP: pop(); break;
+            case OP_NIL:
+                push(NIL_VAL);
+                break;
+            case OP_TRUE:
+                push(BOOL_VAL(true));
+                break;
+            case OP_FALSE:
+                push(BOOL_VAL(false));
+                break;
+            case OP_POP:
+                pop();
+                break;
             case OP_GET_LOCAL: {
                 uint8_t slot = READ_BYTE();
-                push(vm.stack[slot]);
+//                push(vm.stack[slot]);
+                push(frame->slots[slot]);
                 break;
             }
             case OP_SET_LOCAL: {
                 uint8_t slot = READ_BYTE();
-                vm.stack[slot] = peek(0);
+//                vm.stack[slot] = peek(0);
+                frame->slots[slot] = peek(0);
                 break;
             }
             case OP_GET_GLOBAL: {
@@ -186,12 +212,16 @@ static InterpretResult run() {
                 push(BOOL_VAL(valuesEqual(a, b)));
                 break;
             }
-            case OP_GREATER: BINARY_OP(BOOL_VAL, >); break;
-            case OP_LESS:    BINARY_OP(BOOL_VAL, <); break;
-//            case OP_ADD:
-//                BINARY_OP(+);
-//                BINARY_OP(NUMBER_VAL, +);
-//                break;
+            case OP_GREATER:
+                BINARY_OP(BOOL_VAL, >);
+                break;
+            case OP_LESS:
+                BINARY_OP(BOOL_VAL, <);
+                break;
+                //            case OP_ADD:
+                //                BINARY_OP(+);
+                //                BINARY_OP(NUMBER_VAL, +);
+                //                break;
             case OP_ADD: {
                 if (IS_STRING(peek(0)) && IS_STRING(peek(1))) {
                     concatenate();
@@ -207,15 +237,15 @@ static InterpretResult run() {
                 break;
             }
             case OP_SUBTRACT:
-//                BINARY_OP(-);
+                //                BINARY_OP(-);
                 BINARY_OP(NUMBER_VAL, -);
                 break;
             case OP_MULTIPLY:
-//                BINARY_OP(*);
+                //                BINARY_OP(*);
                 BINARY_OP(NUMBER_VAL, *);
                 break;
             case OP_DIVIDE:
-//                BINARY_OP(/);
+                //                BINARY_OP(/);
                 BINARY_OP(NUMBER_VAL, /);
                 break;
                 //                case OP_NEGATE:   push(-pop()); break;
@@ -240,22 +270,25 @@ static InterpretResult run() {
                 break;
             case OP_JUMP: {
                 uint16_t offset = READ_SHORT();
-                vm.ip += offset;
+//                vm.ip += offset;
+                frame->ip += offset;
                 break;
             }
             case OP_JUMP_IF_FALSE: {
                 uint16_t offset = READ_SHORT();
-                if (isFalsey(peek(0))) vm.ip += offset;
+//                if (isFalsey(peek(0))) vm.ip += offset;
+                if (isFalsey(peek(0))) frame->ip += offset;
                 break;
             }
             case OP_LOOP: {
                 uint16_t offset = READ_SHORT();
-                vm.ip -= offset;
+//                vm.ip -= offset;
+                frame->ip -= offset;
                 break;
             }
             case OP_RETURN: {
-//                printValue(pop());
-//                printf("\n");
+                //                printValue(pop());
+                //                printf("\n");
                 // Exit interpreter
                 return INTERPRET_OK;
             }
@@ -279,19 +312,28 @@ InterpretResult interpret(const char *source) {
     //    return run();
     //        compile(source);
     //        return INTERPRET_OK;
-    Chunk chunk;
-    initChunk(&chunk);
+//    Chunk chunk;
+//    initChunk(&chunk);
+//
+//    if (!compile(source, &chunk)) {
+//        freeChunk(&chunk);
+//        return INTERPRET_COMPILE_ERROR;
+//    }
+//
+//    vm.chunk = &chunk;
+//    vm.ip = vm.chunk->code;
+    ObjFunction* function = compile(source);
+    if (function == NULL) return INTERPRET_COMPILE_ERROR;
 
-    if (!compile(source, &chunk)) {
-        freeChunk(&chunk);
-        return INTERPRET_COMPILE_ERROR;
-    }
+    push(OBJ_VAL(function));
+    CallFrame* frame = &vm.frames[vm.frameCount++];
+    frame->function = function;
+    frame->ip = function->chunk.code;
+    frame->slots = vm.stack;
 
-    vm.chunk = &chunk;
-    vm.ip = vm.chunk->code;
-
-    InterpretResult result = run();
-
-    freeChunk(&chunk);
-    return result;
+//    InterpretResult result = run();
+//
+//    freeChunk(&chunk);
+//    return result;
+    return run();
 }
