@@ -20,6 +20,17 @@ static void resetStack() {
     vm.frameCount = 0;
 }
 
+/*
+ * Stopping on a runtime error is important to prevent the VM from crashing
+ * and burning in some ill-defined way. But simply aborting doesn't help the
+ * user fix their code that *caused* that error.
+ *
+ * The classic tool to aid debugging runtime failures is a **stack trace** - a
+ * print out of each function that was still executing when the program died, and
+ * where the execution was at the point that it died. Now that we have a call
+ * stack and we've conveniently sored each function's name, we can show that
+ * entire stack when a runtime error disrupts the harmony of the user's existence.
+ */
 static void runtimeError(const char *format, ...) {
     va_list args;
     va_start(args, format);
@@ -27,12 +38,25 @@ static void runtimeError(const char *format, ...) {
     va_end(args);
     fputs("\n", stderr);
 
+    for (int i = vm.frameCount - 1; i >= 0; i--) {
+        CallFrame* frame = &vm.frames[i];
+        ObjFunction* function = frame->function;
+        size_t instruction = frame->ip - function->chunk.code - 1;
+        fprintf(stderr, "[line %d] in ",
+                function->chunk.lines[instruction]);
+        if (function->name == NULL) {
+            fprintf(stderr, "script\n");
+        } else {
+            fprintf(stderr, "%s()\n", function->name->chars);
+        }
+    }
+
 //    size_t instruction = vm.ip - vm.chunk->code - 1;
 //    int line = vm.chunk->lines[instruction];
-    CallFrame* frame = &vm.frames[vm.frameCount - 1];
-    size_t instruction = frame->ip - frame->function->chunk.code - 1;
-    int line = frame->function->chunk.lines[instruction];
-    fprintf(stderr, "[line %d] in script\n", line);
+//    CallFrame* frame = &vm.frames[vm.frameCount - 1];
+//    size_t instruction = frame->ip - frame->function->chunk.code - 1;
+//    int line = frame->function->chunk.lines[instruction];
+//    fprintf(stderr, "[line %d] in script\n", line);
     resetStack();
 }
 
