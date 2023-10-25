@@ -87,3 +87,59 @@ closures, each prints a different string. That implies we need some runtime repr
 the local variables surrounding the function as they exist when the function declaration is *executed*, not just when it
 is compiled.
 
+## Upvalues
+
+Our existing instructions for reading and writing local variables are limited to a single function's stack window. 
+Locals from a surrounding function are outside of the inner function's stack window. We're going to need some new 
+instructions.
+
+The easiest approach might be an instruction that takes a relative stack slot offset that can reach *before* the current
+function's window. That would work if closed-over variables were always on the stack. But as we saw earlier, these
+variables sometimes outlive the function where they are declared. That means they won't always be on the stack.
+
+The next easiest approach, then, would be to take any local variable that gets closed over and have it always live on 
+the heap. When the local variable declaration in the surrounding function is executed, the VM would allocate memory for
+it dynamically. That way it could live as long as needed.
+
+This would be a fine approach if clox didn't have a single-pass compiler. But that restriction we chose in our 
+implementation makes things harder. Take a look at this e.g.:
+```shell
+fun outer() {
+  var x = 1;     // (1)
+  x = 2;         // (2)
+  fun inner() {  // (3)
+    print x;
+  }
+  inner();
+}
+```
+Here, the compiler compiles the declaration of `x` at `(1)` and emits code for the assignment at `(2)`. It does that 
+before reaching the declaration of `inner()` at `(3)` and discovering that `x` is in fact closed over. We don't have an
+easy way to go back and fix that already-emitted code to treat `x` specially. Instead, we want a solution that allows a
+closed-over variable to live on the stack exactly like a normal local variable *until the point that it is closed over*.
+
+Fortunately, thanks to the Lua dev team, we have a solution. We use a level of indirection that they call an **upvalue**
+. An upvalue refers to a local variable in an enclosing function. Every closure maintains an array of upvotes, one for 
+each surrounding local variable that the closure uses.
+
+The upvalue points back into the stack to where the variable it captured lives. When the closure needs to access a 
+closed-over variable, it goes through the corresponding upvalue to reach it. When a function declaration is first 
+executed and we create a closure for it, the VM creates the array of upvalues and wires them up to "capture" the 
+surrounding local variables that the closure needs.
+
+E.g., if we throw this program at clox
+```shell
+{
+  var a = 3;
+  fun f() {
+    print a;
+  }
+}
+```
+the compiler and runtime will conspire together to build up a set of objects in memory like this:
+
+![memory-layout](../pic/memory-layout.png)
+
+That might look overwhelming, but fear not. We'll work out way through it. The important part is that upvalues serve as
+the layer of indirection needed to continue to find a captured local variable even after it moves off the stack. But
+before we get to all that, let's focus on compiling captured variables.
