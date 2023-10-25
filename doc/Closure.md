@@ -143,3 +143,113 @@ the compiler and runtime will conspire together to build up a set of objects in 
 That might look overwhelming, but fear not. We'll work out way through it. The important part is that upvalues serve as
 the layer of indirection needed to continue to find a captured local variable even after it moves off the stack. But
 before we get to all that, let's focus on compiling captured variables.
+
+### *Compiling upvalues*
+
+```shell
+fun outer() {
+  var x = 1;
+  fun inner() {
+    print x;  // (1)
+  }
+  inner();
+}
+```
+
+### *Flattening upvalues*
+
+Lox also supports accessing local variables declared in *any* enclosing scope, as in:
+
+```shell
+fun outer() {
+  var x = 1;
+  fun middle() {
+    fun inner() {
+      print x;
+    }
+  }
+}
+```
+Here, we're accessing `x` in `inner()`. That variable is defined not in `middle()`, but all the way out in `outer()`. We
+need to handle cases like this too.
+
+There is another e.g.:
+```shell
+fun outer() {
+  var x = "value";
+  fun middle() {
+    fun inner() {
+      print x;
+    }
+    
+    print "create inner closure";
+    return inner;
+  }
+  
+  print "return from outer.";
+  return middle;
+}
+
+var mid = outer();
+var in = mid();
+in();
+```
+The execution flow is:
+
+![execution-flow-trace](../pic/execution-flow-trace.png)
+
+This is how `x` is popped 1 before it is captured 2 and then later accessed 3. We really have two problems:
+1. We need to resolve local variables that are declared in surrounding functions beyond the immediately enclosing one.
+2. We need to be able to capture variables that have already left the stack.
+
+Fortunately, we're in the middle of adding upvalues to the VM, and upvalues are explicitly designed for tracking 
+variables that have escaped the stack. So, in a clever bit of self-reference, we can use upvalues to allow upvalues to
+capture variables declared outside of the immediately surrounding function.
+
+The solution is to allow a closure to capture either a local variable or *an existing upvalue* in the immediately 
+enclosing function. If a deeply nested function references a local variable declared several hops away, we'll thread it 
+through all of the intermediate functions by having each function capture an upvalue for the next function to grab.
+
+In the above example, `middle()` captures the local variable `x` in the immediately enclosing function `outer()` and 
+stores it in its own upvalue. It does this even though `middle()` itself doesn't reference `x`. Then, when the 
+declaration of `inner()` executes, it closure grabs the *upvalue* from the ObjClosure for `middle()` that captured `x`.
+A function captures - either a local or upvalue - *only* from the immediately surrounding function, which is guaranteed 
+to still be around at the point that the inner function declaration executes.
+
+In order to implement this, `resolveUpvalue()` becomes recursive.
+
+
+This in spite of the fact that I wasn't inventing anything new, just porting the concept over from Lua. Most recursive
+functions either do all their work before the recursive call (a **pre-order traversal**, or "on the way down"), or they 
+do all the work after the recursive call (a **post-order traversal**, or "on the way back up"). This function does both.
+The recursive call is right in the middle.
+
+We'll walk through it slowly. First, we look for a matching local variable in the enclosing function. If we find one, we
+capture that local and return. That's the base case.
+
+> The other base case, of course, is if there is no enclosing function. In that case, the variable can't be resolved 
+> lexically and is treated as global.
+
+
+Otherwise, we look for a local variable beyond the immediately enclosing function. We do that by recursively callign 
+`resolveUpvalue()` on the *enclosing* compiler, not the current one. This series of `resolveUpvalue()` calls works its 
+way along the chain of nested compilers until it hits one of the base cases - either it finds an actual local variable 
+to capture or it runs out of compilers.
+
+When a local variable is found, the most deeply nested call to `resolveUpvalue()` captures it and returns the upvalue 
+index. That returns to the next call for the inner function declaration. That call captures the `upvalue` from the 
+surrounding function, and so on. As each nested call to `resolveUpvalue()` returns, we drill back down into the 
+innermost function declaration where the identifier we are resolving appears. At each step along the way, we add an 
+upvalue to the intervening function and pass the resulting upvalue index down to the next call.
+
+It might help to walk through the original example when resolving `x`:
+
+![walk-through-resolve](../pic/walk-through-resolve.png)
+
+Note that the new call to `addUpvalue()` passes `false` for the `isLocal` parameter. Now you see that the flag controls
+whether the closure captures a local variable or an upvalue from the surrounding function.
+
+By the time the compiler reaches the end of a function declaration, every variable reference has been resolved as either
+a local, an upvalue, or a global. Each upvalue may in turn capture a local variable from the surrounding function, or an
+upvalue in the case of transitive closures. We finally have enough data to emit bytecode which creates a closure at 
+runtime that captures all the correct variables.
