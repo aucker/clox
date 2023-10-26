@@ -41,6 +41,23 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
     return result;
 }
 
+void markObject(Obj* object) {
+    if (object == NULL) return;
+#ifdef DEBUG_LOG_GC
+    printf("%p mark ", (void*)object);
+    printValue(OBJ_VAL(object));
+    printf("\n");
+#endif
+
+    object->isMarked = true;
+}
+
+void markValue(Value value) {
+    // we only care about the heap allocated value, not [numbers, Boolean, nil]
+    // cause they are inline in Value, requires no heap allocation.
+    if (IS_OBJ(value)) markObject(AS_OBJ(value));
+}
+
 static void freeObject(Obj* object) {
 #ifdef DEBUG_LOG_GC
     printf("%p free type %d\n", (void*)object, object->type);
@@ -77,10 +94,20 @@ static void freeObject(Obj* object) {
     }
 }
 
+static void markRoots() {
+    for (Value* slot = vm.stack; slot < vm.stackTop; slot++) {
+        markValue(*slot);
+    }
+
+    markTable(&vm.globals);
+}
+
 void collectGarbage() {
 #ifdef DEBUG_LOG_GC
     printf("-- gc begin\n");
 #endif
+
+    markRoots();
 
 #ifdef DEBUG_LOG_GC
     printf("-- gc end\n");
