@@ -66,6 +66,9 @@ typedef struct ObjUpvalue {
 typedef struct {
     Obj obj;
     ObjFunction* function;
+    // what does this mean, double star
+    ObjUpvalue** upvalues;
+    int upvalueCount;
 } ObjClosure;
 
 ObjClosure* newClosure(ObjFunction* function);
