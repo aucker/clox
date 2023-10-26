@@ -3,6 +3,7 @@
 //
 #include <stdlib.h>
 
+#include "compiler.h"
 #include "memory.h"
 #include "vm.h"
 
@@ -99,7 +100,20 @@ static void markRoots() {
         markValue(*slot);
     }
 
+    for (int i = 0; i < vm.frameCount; i++) {
+        markObject((Obj*)vm.frames[i].closure);
+    }
+
+    for (ObjUpvalue* upvalue = vm.openUpvalues;
+         upvalue != NULL;
+         upvalue = upvalue->next) {
+        markObject((Obj*)upvalue);
+    }
+
     markTable(&vm.globals);
+    // to keep compiler module cleanly separated from the
+    // rest of the VM, we handle in a separate function
+    markCompilerRoots();
 }
 
 void collectGarbage() {
