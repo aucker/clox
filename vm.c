@@ -23,6 +23,7 @@ static void resetStack() {
     // free the stack, now empty
     vm.stackTop = vm.stack;
     vm.frameCount = 0;
+    vm.openUpvalues = NULL;
 }
 
 /*
@@ -166,7 +167,26 @@ static bool callValue(Value callee, int argCount) {
 
 // helper func in run() case OP_CLOSURE:
 static ObjUpvalue* captureUpvalue(Value* local) {
+    ObjUpvalue* preUpvalue = NULL;
+    ObjUpvalue* upvalue = vm.openUpvalues;
+    while (upvalue != NULL && upvalue->location > local) {
+        preUpvalue = upvalue;
+        upvalue = upvalue->next;
+    }
+
+    if (upvalue != NULL && upvalue->location == local) {
+        return upvalue;
+    }
+
     ObjUpvalue* createdUpvalue = newUpvalue(local);
+    createdUpvalue->next = upvalue;
+
+    if (preUpvalue == NULL) {
+        vm.openUpvalues = createdUpvalue;
+    } else {
+        preUpvalue->next = createdUpvalue;
+    }
+
     return createdUpvalue;
 }
 
