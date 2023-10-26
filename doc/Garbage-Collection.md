@@ -135,3 +135,6 @@ It looks something like this:
 
 That's what we're gonna implement. Whenever we decide it's time to reclaim some bytes, we'll trace everything and mark 
 all the reachable objects, free what didn't get marked, and then resume the user's program.
+
+### *Collecting garbage*
+
