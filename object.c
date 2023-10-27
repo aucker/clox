@@ -65,12 +65,15 @@ static ObjString* allocateString(char* chars, int length,
     string->length = length;
     string->chars = chars;
     string->hash = hash;
+
+    push(OBJ_VAL(string));
     /*
      * Some langs have a separate type or an explicit step to intern a string
      * For clox, we automatically intern every one. which means whenever we
      * create a new unique string, we add it to the table
      */
     tableSet(&vm.strings, string, NIL_VAL);
+    pop();
     return string;
 }
 
