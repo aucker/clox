@@ -211,3 +211,7 @@ addition to setting the mark field we'll also add it to the worklist.
 OK, now when we're done marking the roots, we have both set a bunch of fields and filled our work list with objects to
 chew through. It's time for the next phase.
 
+
+If the object is already marked, we don't mark it again and thus don't add it to the gray stack. This ensures that an
+already-gray object is not redundantly added and that a black object is not inadvertently turned back to gray. In other
+words, it keeps the wavefront moving forward through only the white objects.
