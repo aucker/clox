@@ -267,3 +267,123 @@ To remove references to unreachable strings, we need to know which strings *are*
 after the mark phase has completed. But we can't wait until after the sweep phase is done because by then the objects -
 and their mark bits - are no longer around to check. So the right time is exactly between the marking and sweeping 
 phases.
+
+
+## When to Collect
+
+We have a fully functioning mark-sweep GC now. When the stress testing flag is enabled, it gets called all the time, and
+with the logging enabled too, we can watch it do its thing and see that it is indeed reclaiming memory. But, when the 
+stress testing flag is off, it never runs at all. It's time to decide when the collector should be invoked during normal
+program execution.
+
+As far as I can tell, this question is poorly answered by the literature. When GC were first invented, computers had a 
+tiny, fixed amount of memory. Many of the early GC parsers assumed that you set aside a few thousand words of memory - 
+in other words, most of it - and invoked the collector whenever you ran out. Simple.
+
+Modern machines have gigs of physical RAM, hidden behind the operating system's even larger virtual memory abstraction, 
+which is shared among a slew of other programs all fighting for their chunk of memory. The operating system will let 
+your program request as much as it wants and then page in and out from the disc when physical memory gets full. You
+never really "run out" of memory, you just get slower and slower.
+
+### *Latency and throughput*
+
+It no longer makes sense to wait until you "have to", to run the GC, so we need a more subtle timing strategy. To reason
+about this more precisely, it's time to introduce two fundamental numbers used when measuring a memory manager's 
+performance: *throughput* and *latency*.
+
+Every managed language pays a performance price compared to explicit, user-authored deallocation. The time spent 
+actually freeing memory is the same, but the GC spends cycles figuring out *which* memory to free. That is time *not* 
+spent running the user's code and doing useful work. In our implementation, that's the entirety of the mark phase. The
+goal of a sophisticated GC is to minimize that overload.
+
+There are two key metrics we can use to understand that cost better:
+* **Throughput** is the total fraction of time spent running user code versus doing GC work. Say you run a clox program
+    for ten seconds and it spends a second of that inside `collectGarbage()`. That means the throughput is 90% - it 
+    spent 90% of the time running the program and 10% on GC overhead.
+    
+    Throughput is the most fundamental measure because it tracks the total cost of collection overhead. All else being 
+    equal, you want to maximize throughput. Up until this chapter, clox had no GC at all and thus 100% throughput. 
+    That's pretty hard to beat. Of course, it came at the slight expense of potentially running out of memory and 
+    crashing if the user's program ran long enough. You can look at the goal of a GC as fixing that "glitch" while 
+    sacrificing as little throughput as possible.
+    
+* **Latency** is the longest *continuous* chunk of time where the user's program is completely paused while GC happens.
+    It's a measure of how "chunky" the collector is. Latency is an entirely different metric than throughput.
+    
+    Consider two runs of a clox program that both take ten seconds. In the first run, the GC kicks in once and spends 
+    a solid second in `collectGarbage()` in one massive collection. In the second run, the GC gets invoked five times,
+    each for a fifth of a second. The *total* amount of time spent collecting is still a second, so the throughput is 
+    90% in both cases. But in the second run, the latency is only 1/5th of a second, five times less than in the first.
+
+![throughput-latency](../pic/throughput-latency.png)
+
+> The bar represents the execution of a program, divided into time spent running user code and time spent in the GC. The
+> size of the largest single slice of time running the GC is the latency. The size of all the user code slices added up
+> is the throughput.
+
+If you like analogies, imagine your program is a bakery selling fresh-baked bread to customers. Throughput is the total
+number of warm, crusty baguettes you can serve to customers in a single day. Latency is how long the unluckiest customer
+has to wait in line before they get served.
+
+Running the GC is like shutting down the bakery temporarily to go through all the dishes, sort out the dirty from the 
+clean, and then wash the used one. In our analogy, we don't have dedicated dishwashers, so while this is going on, no 
+baking is happening. The baker is washing up.
+
+Selling fewer loaves of bread a day is bad, and making any particular customer sit and wait while you clean all the 
+dishes is too. The goal is to maximize throughput and minimize latency, but there is no free lunch, even inside a 
+bakery. GCs make different trade-offs between how much throughput they sacrifice and latency they tolerate.
+
+
+> If each person represents a thread, then an obvious optimization is to have separate threads running GC, giving you
+> a **concurrent GC**. In other words, hire some dishwashers to clean while others bake. This is how very sophisticated
+> GCs work bc it does let the bakers - the workers threads - keeping running user code with little interruption.
+> 
+> However, coordination is required. You don't want a dishwasher grabbing a bowl out of a baker's hands! This 
+> coordination adds overhead and a lot of complexity. Concurrent collcetors are fast, but challenging to implement
+> correctly.
+
+Being able to make these trade-offs is useful bc different user programs have different needs. An overnight batch job
+that is generating a report from a terabyte of data just needs to get as much work done as fast possible. Throughput is 
+queen. Meanwhile, an app running on a user's smartphone needs to always respond immediately to user input so that 
+dragging on the screen feels buttery smooth. The app can't freeze for a few seconds while the GC mucks around in the 
+heap.
+
+
+Our collector is a **stop-the-world GC** which means the user's program is paused until the entire garbage collection
+process has completed. If we wait a long time before we run the collector, then a large number of dead objects will
+accumulate. That leads to a very long pause while the collector runs, and thus high latency. So, clearly, we want to run
+the collector really frequently.
+
+> In contrast, an **incremental garbage collector** can do a little collection, then run some user code, then collect a
+> little more, and so on.
+
+But every time the collector runs, it spends some time visiting live objects. That doesn't really *do* anything useful
+(aside from ensuring that they don't incorrectly get deleted). Time visiting live objects is time not freeing memory and
+also time not running user code. If you run the GC *really* frequently, then the user's program doesn't have enough time
+to even generate new gargabe for the VM to collect. The VM will spend all its time obsessively revisiting the same set 
+of live objects over and over, and throughput will suffer. So, clearly, we want to run the collector really 
+*in*frequently.
+
+In fact, we want something in the middle, and the frequency of when the collector runs is one of our main knobs for
+tuning the trade-off between latency and throughput.
+
+
+### *Self-adjusting heap*
+
+We want our GC to run frequently enough to minimize latency but infrequently enough to maintain decent throughput. But 
+how do we find the balance between these when we have no idea how much memory the user's program needs and how often it
+allocates? We could pawn the problem onto the user and force them to pick by exposing GC tuning parameters. Many VMs do
+this. But if we, the GC authors, don't know how to tune ti well, odds are good most users won't either. They deserve a
+reasonable default behavior.
+
+
+The strategy here is common and pretty simple.
+
+The idea is that the collector frequency automatically adjusts based on the live size of the heap. We track the total 
+number of bytes of managed memory that the VM has allocated. When it goes above some threshold, we trigger a GC. After
+that, we note how many bytes of memory remain - how many were *not* freed. Then we adjust the threshold to some value 
+larger than that.
+
+The result is that as the amount of live memory increases, we collect less frequently in order to avoid sacrificing
+throughput by re-traversing the growing pile of live objects. As the amount of live memory goes down, we collect more
+frequently so that we don't lose too much latency by waiting too long.
