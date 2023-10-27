@@ -232,3 +232,38 @@ to continuously remember the previous node so we can unlink its next pointer, an
 we are freeing the first node. But, otherwise, it's pretty simple - delete every node in a linked list that doesn't have
 a bit set in it.
 
+### *Weak references and the string pool*
+
+We are almost done collecting. There is one remaining corner of the VM that has some unusual requirements around memory.
+Recall that when we added strings to clox we made the VM intern them all. That means the VM has a hash table containing
+a pointer to every single string in the heap. The VM uses this to de-duplicate strings.
+
+During the mark phase, we deliberately did *not* treat the VM's string table as a source of roots. If we had, no string
+would *ever* be collected. The string table would grow and grow and never yield a single byte of memory back to the 
+operating system. That would be bad.
+
+At the same time, if we *do* let the GC free strings, then the VM's string table will be left with dangling pointers to
+freed memory. That would be even worse.
+
+> This can be a real problem. Java does not intern *all* strings, but it does intern string *literals*. It also provides
+> an API to add strings to the string table. For many years, the capacity of that table was fixed, and strings added to
+> it could never be removed. If users weren't careful about their use of `String.intern()`, they could run out of 
+> memory and crash.
+> 
+> Ruby had a similiar problem for years where symbols - interned string-like values - were not garbage collected. Both
+> eventually enabled the GC to collect these strings.
+
+The string table is special and we need special support for it. In particular, it needs a special kind of reference. The
+table should be able to refer to a string, but that like should not be considered a root when determining reachability.
+That implies that the referenced object can be freed. When that happens, the dangling reference must be fixed too, sort
+of like a magic, self-clearing pointer. This particular set of semantics comes up frequently enough that it has a name:
+a [**weak reference**](https://en.wikipedia.org/wiki/Weak_reference).
+
+We have already implicitly implemented half of the string table's unique behavior by virtue of the fact that we *don't*
+traverse it during marking. That means it doesn't force strings to be reachable. The remaining piece is clearing out any
+dangling pointers for strings that are freed.
+
+To remove references to unreachable strings, we need to know which strings *are* unreachable. We don't know that until
+after the mark phase has completed. But we can't wait until after the sweep phase is done because by then the objects -
+and their mark bits - are no longer around to check. So the right time is exactly between the marking and sweeping 
+phases.
