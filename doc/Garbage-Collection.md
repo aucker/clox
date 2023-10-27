@@ -138,3 +138,71 @@ all the reachable objects, free what didn't get marked, and then resume the user
 
 ### *Collecting garbage*
 
+
+## Tracing Object References
+
+The next step in the parking process is tracing through the graph of references between objects to find the indirectly
+reachable values. We don't have instances with fields yet, so there aren't many objects that contain references, but we
+do have some. In particular, ObjClosure has the list of ObjUpvalues it closes over as well as a reference to the raw
+ObjFunction that it wraps. ObjFunction, in turn, has a constant table contaning references to all of the literals 
+created in the function's body. This is enough to build a fairly complex web of objects for out collector to crawl 
+through.
+
+Now it's time to implement that traversal. We do go breadth-first, depth-first, or in some other order. Since we just 
+need to find the *set* of all reachable objects, the order we visit them mostly doesn't matter.
+
+> "mostly", bc some GCs move objects in the order they are visited, so traversal order determines which objects end up
+> adjacent in memory. That impacts performance bc the CPU uses locality to determine which memory to preload into the 
+> caches.
+> 
+> Even when traversal order does matter, it's not clear which order is *best*. It's very difficult to determine which
+> order objects will be used in in the future, so it's hard for the GC to know which order will help performance.
+
+### *The tricolor abstraction*
+
+As the collector wanders through the graph of objects, we need to make sure it doesn't lose track of where it is or get
+stuck going in circles. This is particularly a concern for advanced implementations like incremental GCs that interleave
+marking with running pieces of the user's program. The collector needs to be able to pause and then pick up where it 
+left off later.
+
+> Advanced GC algorithms often add other colors to the abstraction. I've seen multiple shades of gray, and even purple 
+> in some designs.
+
+The help us soft-brained humans reason about this complex process, VM hackers came up with a metaphor called the 
+**tricolor abstraction**. Each object has a conceptual "color" that tracks what state the object is in, and what work is
+left to do.
+* **White**: At the beginning of a GC, every object is white. This color means we have not reached or processed the 
+    object at all.
+* **Gray**: During marking, when we first reach an object, we darken it gray. This color means we know the object itself
+    is reachable and should not be collected. But we have not yet traced *through* it to see what *other* objects it 
+    references. In graph algorithm terms, this is the *worklist* - the set of objects we know about but haven't 
+    processed yet.
+* **Black**: When we take a gray object and mark all of the objects it references, we then turn the gray object black.
+    This color means the mark phase is done processing that object.
+
+In terms of that abstraction, the marking process now looks like this:
+1. Start off with all objects white.
+2. Find all the roots and mark them gray.
+3. Repeat as long as there are still gray objects:
+   1. Pick a gray object. Turn any white objects that the object mentions to gray.
+   2. Mark the original gray object black.
+
+![tricolor-abstraction](../pic/tricolor-abstraction.png)
+
+At the end, you're left with a sea of reached, black objects sprinkled with islands of white objects that can be swept 
+up and freed. Once the unreachable objects are freed, the remaining objects - all black - are reset to white for the 
+next GC cycle.
+
+> Note that at every step of this process no black node ever points to a white node. This property is called the 
+> **tricolor invariant**. The traversal process maintains this invariant to ensure that no reachable object is ever
+> collected.
+
+### *A worklist for gray objects*
+
+In our implementation we have already marked the roots. They're all gray. The next step is to start picking them and 
+traverse their references. But we don't have any easy way to find them. We set a field on the object, but that's it. We
+don't want to have to traverse the entire object list looking for objects with that field set.
+
+Instead, we'll create a separate worklist to keep track of all of the gray objects. When an object turns gray, in 
+addition to setting the mark field we'll also add it to the worklist.
+

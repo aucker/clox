@@ -51,6 +51,27 @@ void markObject(Obj* object) {
 #endif
 
     object->isMarked = true;
+
+    // the capacity is not enough, grow it
+    if (vm.grayCapacity < vm.grayCount + 1) {
+        vm.grayCapacity = GROW_CAPACITY(vm.grayCapacity);
+        vm.grayStack = (Obj**)realloc(vm.grayStack,
+                                        sizeof(Obj*) * vm.grayCapacity);
+
+        /*
+         * We take responsibility for this array, which includes allocation failure.
+         * If we can't create or grow the gray stack, then we can't finish GC
+         * This is bad for VM, we just abort here for simplicity.
+         *
+         * To be more robust, we can allocate a "rainy day fund" block of memory when
+         * we start the VM. If the gray stack allocation fails, we free the rainy day
+         * block and try again. That may give us enough wiggle room on the heap to
+         * create the gray stack, finish the GC, and free up more memory.
+         */
+        if (vm.grayStack == NULL) exit(1);
+    }
+
+    vm.grayStack[vm.grayCount++] = object;
 }
 
 void markValue(Value value) {
@@ -135,4 +156,7 @@ void freeObjects() {
         freeObject(object);
         object = next;
     }
+
+    // free gray stack when VM shuts down
+    free(vm.grayStack);
 }

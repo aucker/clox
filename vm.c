@@ -79,6 +79,11 @@ void initVM() {
     resetStack();
     vm.objects = NULL;
 
+    // init the gray parameters
+    vm.grayCount = 0;
+    vm.grayCapacity = 0;
+    vm.stackTop = NULL;
+
     // we need to initialize the hash table to a valid state
     initTable(&vm.globals);
     // when we spin up a new VM, the string table is empty
