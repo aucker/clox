@@ -387,3 +387,21 @@ larger than that.
 The result is that as the amount of live memory increases, we collect less frequently in order to avoid sacrificing
 throughput by re-traversing the growing pile of live objects. As the amount of live memory goes down, we collect more
 frequently so that we don't lose too much latency by waiting too long.
+
+
+## Garbage Collection Bugs
+
+In theory, we are all done now. We have a GC. It kicks in periodically, collects what it can, and leaves the rest. 
+
+But sometimes there is painful reality, and GC bugs really are some of the grossest invertebrates out there.
+
+The collector's job is to free dead objects and preserve live ones. Mistakes are easy to make in both directions. If the
+VM fails to free objects that aren't needed, it slowly leaks memory. These failures often don't immediately cause a 
+crash, which makes it hard for us to track backward in time to find the bug.
+
+This is made harder by the fact that we don't know when the collector will run. Any call that eventually allocates some
+memory is a place in the VM where a collection could happen. It's like musical chairs. At any point, the GC might stop
+the music. Every single heap-allocated object that we want to keep needs to find a chair quickly - get marked as a root
+or stored as a reference in some other object - before the sweep phase comes to kick it out of the game.
+
+How 
