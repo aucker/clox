@@ -206,3 +206,8 @@ don't want to have to traverse the entire object list looking for objects with t
 Instead, we'll create a separate worklist to keep track of all of the gray objects. When an object turns gray, in 
 addition to setting the mark field we'll also add it to the worklist.
 
+### *Processing gray objects*
+
+OK, now when we're done marking the roots, we have both set a bunch of fields and filled our work list with objects to
+chew through. It's time for the next phase.
+

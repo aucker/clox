@@ -44,6 +44,8 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
 
 void markObject(Obj* object) {
     if (object == NULL) return;
+    // to handle the cyclic graph issue, infinite loop
+    if (object->isMarked) return;
 #ifdef DEBUG_LOG_GC
     printf("%p mark ", (void*)object);
     printValue(OBJ_VAL(object));
@@ -78,6 +80,49 @@ void markValue(Value value) {
     // we only care about the heap allocated value, not [numbers, Boolean, nil]
     // cause they are inline in Value, requires no heap allocation.
     if (IS_OBJ(value)) markObject(AS_OBJ(value));
+}
+
+static void markArray(ValueArray* array) {
+    for (int i = 0; i < array->count; i++) {
+        markValue(array->values[i]);
+    }
+}
+
+static void blackenObject(Obj* object) {
+#ifdef DEBUG_LOG_GC
+    printf("%p blacken ", (void*)object);
+    printValue(OBJ_VAL(object));
+    printf("\n");
+#endif
+    /*
+     * This way, we can watch the tracing percolate through the object graph.
+     * References between objects are directed, but that doesn't mean they're *acyclic*.
+     * So we need to ensure our collector doesn't get stuck in an infinite loop
+     * as it continually re-adds the same series of objects to the gray stack.
+     */
+
+    switch (object->type) {
+        case OBJ_CLOSURE: {
+            ObjClosure* closure = (ObjClosure*)object;
+            markObject((Obj*)closure->function);
+            for (int i = 0; i < closure->upvalueCount; i++) {
+                markObject((Obj*)closure->upvalues[i]);
+            }
+            break;
+        }
+        case OBJ_FUNCTION: {
+            ObjFunction* function = (ObjFunction*)object;
+            markObject((Obj*)function->name);
+            markArray(&function->chunk.constants);
+            break;
+        }
+        case OBJ_UPVALUE:
+            markValue(((ObjUpvalue*)object)->closed);
+            break;
+        case OBJ_NATIVE:
+        case OBJ_STRING:
+            break;
+    }
 }
 
 static void freeObject(Obj* object) {
@@ -137,12 +182,20 @@ static void markRoots() {
     markCompilerRoots();
 }
 
+static void traceReferences() {
+    while (vm.grayCount > 0) {
+        Obj* object = vm.grayStack[--vm.grayCount];
+        blackenObject(object);
+    }
+}
+
 void collectGarbage() {
 #ifdef DEBUG_LOG_GC
     printf("-- gc begin\n");
 #endif
 
     markRoots();
+    traceReferences();
 
 #ifdef DEBUG_LOG_GC
     printf("-- gc end\n");
