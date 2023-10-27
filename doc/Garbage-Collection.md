@@ -215,3 +215,20 @@ chew through. It's time for the next phase.
 If the object is already marked, we don't mark it again and thus don't add it to the gray stack. This ensures that an
 already-gray object is not redundantly added and that a black object is not inadvertently turned back to gray. In other
 words, it keeps the wavefront moving forward through only the white objects.
+
+
+## Sweeping Unused Objects
+
+When the loop in `traceReferences()` exits, we have processed all the objects we could get our hands on. The gray stack 
+is empty, and every object  in the heap is either black or white. The black objects are reachable, and we want to hang
+on to them. Anything still white never got touched by the trace and is thus garbage.
+
+The process of `sweep()` is like:
+
+![sweep-process](../pic/sweep-phase.png)
+
+Most of the other code in here deals with the fact that removing a node from a singly linked list is cumbersome. We have
+to continuously remember the previous node so we can unlink its next pointer, and we have to handle the edge case where
+we are freeing the first node. But, otherwise, it's pretty simple - delete every node in a linked list that doesn't have
+a bit set in it.
+
