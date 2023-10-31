@@ -15,3 +15,11 @@ Runtime representation in hand, we are ready to add support for classes to the l
 > allow them at all. But since Lox is a dynamically typed scripting language, it treats the top level of a program and 
 > the bodies of functions and blocks uniformly. Classes are just another kind of declaration, and since you can declare
 > variables and functions inside blocks, you can declare classes in there too.
+
+## Instances of Classes
+
+Classes serve two main purposes in a language:
+* **They are how you create new instances**. Sometimes this involves a `new` keyword, other times it's a method call on
+    the class object, but you usually mention the class by name *somehow* to get a new instance.
+* **They contain methods**. These define how all instances of the class behave.
+
