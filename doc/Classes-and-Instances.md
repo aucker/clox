@@ -23,3 +23,17 @@ Classes serve two main purposes in a language:
     the class object, but you usually mention the class by name *somehow* to get a new instance.
 * **They contain methods**. These define how all instances of the class behave.
 
+
+## Get and Set Expressions
+
+Our object representation for instances can already store state, so all that remains is exposing that functionality to
+the user. Fields are accessed and modified using get and set expressions. Not one to break with tradition, Lox uses the
+classic "dot" syntax:
+
+```shell
+eclair.filling = "pastry creme";
+print eclair.filling;
+```
+
+### *Interpreting getter and setter expressions*
+
