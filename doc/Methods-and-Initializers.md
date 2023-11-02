@@ -194,3 +194,36 @@ fun notMethod() {
 We could try to resolve "this" and then report an error if it wasn't found in any of the surrounding lexical scopes. 
 That would work, but would require us to shuffle around a bunch of code, since right now the code for resolving a 
 variable implicitly considers it a global access if no declaration is found.
+
+
+## Instance Initializers
+
+The reason object-oriented languages tie state and behavior together - one of the core tenets of the paradigm - is to 
+ensure that objects are always in a valid, meaningful state. When the only way to touch an object's state is through its
+methods, the methods can make sure nothing goes away. But that presumes the object is *already* in a proper state. What 
+about when it's first created?
+
+> Of course, Lox does let outside code directly access and modify an instance's fields without going through its 
+> methods. This is unlike Ruby and Smalltalk, which completely encapsulate state inside objects.
+
+
+Object-oriented languages ensure that brand new objects are properly set up through constructors, which both produce a
+new instance and initialize its state. In Lox, the runtime allocates new raw instances, and a class may declare an 
+initializer to set up any fields. Initializers work mostly like normal methods, with a few tweaks:
+1. The runtime automatically invokes the initializer method whenever an instance of a class is created.
+2. The caller that constructs an instance always gets the instance back after the initializer finishes, regardless of 
+    what the initializer function itself returns. The initializer method doesn't need to explicitly return `this`.
+3. In fact, an initializer is *prohibited* from returning any value at all since the value would never be seen anyway.
+
+Now that we support methods, to add initializers, we merely need to implement those three special rules.
+
+> It's as if the initializer is implicitly wrapped in a bundle of code like this:
+> ```shell
+> fun create(klass) {
+>   var obj = newInstance(klass);
+>   obj.init();
+>   return obj;
+> }
+> ```
+
+### Invoking initializers

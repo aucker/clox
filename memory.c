@@ -224,6 +224,7 @@ static void markRoots() {
     // to keep compiler module cleanly separated from the
     // rest of the VM, we handle in a separate function
     markCompilerRoots();
+    markObject((Obj*)vm.initString);
 }
 
 static void traceReferences() {
