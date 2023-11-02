@@ -59,3 +59,83 @@ We'll incrementally write the compiler code to see how those all get through to 
 > 
 > To prevent that, the JVM does a bytecode verification pass before it executes and loaded code. CPython says it's up to
 > the user to ensure any bytecode they run is safe.
+
+
+## Method References
+
+Most of the time, methods are accessed and immediately called, leading to this familiar syntax:
+```shell
+instance.method(argument)
+```
+But remember, in Lox and some other languages, those two steps are distinct and can be separated.
+```shell
+var closure = instance.method;
+closure(argument);
+```
+
+Since users *can* separate the operations, we have to implement them separately. The first step is using our existing 
+dotted property syntax to access a method defined on the instance's class. That should return some kind of object that
+the user can then call like a function.
+
+The obvious approach is to look up the method in the class's method table and return the ObjClosure associated with that
+name. But we also need to remember that when you access a method, `this` gets bound to the instance the method was 
+accessed from. In jlox, we added methods like this:
+```shell
+class Person {
+  sayName() {
+    print this.name;
+  }
+}
+
+var jane = Person();
+jane.name = "Jane";
+
+var method = jane.sayName;
+method();
+```
+
+This should print "Jane", so the object returned by `.sayName` somehow needs to remember the instance it was accessed 
+from when it later gets called. In jlox, we implemented that "memory" using the interpreter's existing heap-allocated
+Environment class, which handled all variable storage.
+
+Our bytecode VM has a more complex architecture for storing state. Local variables and temporaries are on the stack,
+globals are in a hash table, and variables in closures use upvalues. That necessitates a somewhat more complex solution
+for tracking a method's receiver in clox, and a new runtime type.
+
+### Bound methods
+
+When the user executes a method access, we'll find the closure for that method and wrap it in a new "bound method" 
+object that tracks the instance that the method was accessed from. This bound object can be called later like a 
+function. When invoked, the VM will do some shenanigans to wire up `this` to point to the receiver inside the method's 
+body.
+
+> The name "bound method" is from CPython, Python behaves similar to Lox here, and I used it implementation for 
+> inspiration.
+
+
+### Accessing methods
+
+Let's get our new object type doing something. Methods are accessed using the same "dot" property syntax we implemented
+in the last chapter. The compiler already parses the right expressions and emits `OP_GET_PROPERTY` instructions for 
+them. The only changes we need to make are in the runtime.
+
+When a property access instruction executes, the instance is on top of the stack. The instruction's job is to find a 
+field or method with the given name and replace the top of the stack with the accessed property.
+
+The interpreter already handles fields, so we simply extend the `OP_GET_PROPERTY` case with another section.
+
+E.g.:
+```shell
+class Brunch {
+  eggs() {}
+}
+
+var brunch = Brunch();
+var eggs = brunch.eggs;
+```
+Here is what happens when the VM executes the `bindMethod()` call for the `brunch.eggs` expression:
+
+![VM bindMethod](../pic/VM-bindMethod.png)
+
+That's a lot of machinery under the hood, but from the user's perspective, they simply get a function that they can 
+call.
