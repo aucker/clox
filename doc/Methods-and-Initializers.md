@@ -249,3 +249,12 @@ anything *else* from an initializer. Now that the compiler tracks the method typ
 We report an error if a `return` statement in an initializer has a value. We still go ahead and compile the value 
 afterwards so that the compiler doesn't get confused by the trailing expression and report a bunch of cascaded errors.
 
+## Optimized Invocations
+
+Our VM correctly implements the language's semantics for method calls and initializers. We could stop here. But the main
+reason we are building an entire second implementation of Lox from scratch is to execute faster than our old Java 
+interpreter. Right now, method calls even in clox are slow.
+
+Lox's semantics define a method invocation as two operations - accessing the method and then calling the result. Our VM 
+must support those as separate operations bc the user can separate them. You can access a method w/o calling it and then
+invoke the bound method later. Nothing we've implemented so far is unnecessary.
