@@ -51,3 +51,11 @@ To define a new method, the VM needs three things:
 3. The class to bind the method to.
 
 We'll incrementally write the compiler code to see how those all get through to the runtime.
+
+> The VM trusts that the instructions it executes are valid bc the *only* way to get code to the bytecode interpreter is
+> by going through clox's own compiler. Many bytecode VMs, like the JVM and CPython, support executing bytecode that has
+> been compiled separately. That leads to a different security story. Maliciously crafted bytecode could crash the VM or
+> worse.
+> 
+> To prevent that, the JVM does a bytecode verification pass before it executes and loaded code. CPython says it's up to
+> the user to ensure any bytecode they run is safe.
