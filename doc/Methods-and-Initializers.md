@@ -240,3 +240,12 @@ different bytecode at the end of the body to return `this` from the method inste
 functions return. In order to do *that*, the compiler needs to actually know when it is compiling an initializer. We
 detect that by checking to see if the name of the method we're compiling is "init".
 
+### Incorrect returns in initializers
+
+The last step, the last item in our list of special features of initializers, is making it an error to try to return 
+anything *else* from an initializer. Now that the compiler tracks the method type, this is straightforward.
+
+
+We report an error if a `return` statement in an initializer has a value. We still go ahead and compile the value 
+afterwards so that the compiler doesn't get confused by the trailing expression and report a bunch of cascaded errors.
+
