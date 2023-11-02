@@ -139,3 +139,19 @@ Here is what happens when the VM executes the `bindMethod()` call for the `brunc
 
 That's a lot of machinery under the hood, but from the user's perspective, they simply get a function that they can 
 call.
+
+### Calling methods
+
+Users can declare methods on classes, access them on instances, and get bound methods onto the stack. They just can't do
+anything useful with those bound method objects. The operation we're missing is calling them. Calls are implemented in 
+`callValue()`, so we add a case there for the new object type.
+
+> A bound method is a first-class value, so they can store it in variables, pass it to functions, and otherwise do 
+> "value"-y stuff with it.
+
+
+
+
+That's three big steps. We can declare, access, and invoke methods. But somethings is missing. We went to all that 
+trouble to wrap the method closure in an object that binds the receiver, but when we invoke the method, we don't use 
+that receiver at all.
