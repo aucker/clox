@@ -89,7 +89,7 @@ void initVM() {
     // init the gray parameters
     vm.grayCount = 0;
     vm.grayCapacity = 0;
-    vm.stackTop = NULL;
+    vm.grayStack = NULL;
 
     // we need to initialize the hash table to a valid state
     initTable(&vm.globals);
