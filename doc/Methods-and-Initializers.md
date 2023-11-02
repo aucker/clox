@@ -155,3 +155,42 @@ anything useful with those bound method objects. The operation we're missing is 
 That's three big steps. We can declare, access, and invoke methods. But somethings is missing. We went to all that 
 trouble to wrap the method closure in an object that binds the receiver, but when we invoke the method, we don't use 
 that receiver at all.
+
+
+## This
+
+The reason bound methods need to keep hold of the receiver is so that it can be accessed inside the body of the method.
+Lox exposes a method's receiver through `this` expressions. The lexer already treats `this` as a special token type, so
+the first step is wiring that token up in the parse table.
+
+
+> The underscore at the end of the name of the parser function is bc `this` is a reserved word in C++ and we support 
+> compiling clox as C++.
+
+
+We'll apply the same implementation technique for `this` in clox that we used in jlox. We treat `this` as a lexically
+scoped local variable whose value gets magically initialized. Compiling it like a local variable means we get a lot of 
+behavior for free. In particular, closures inside a method that reference `this` will do the right thing and capture 
+the receiver in an upvalue.
+
+When the parser function is called, the `this` token has just been consumed and is stored as the previous token. We call
+our existing `varible()` function which compiles identifier expressions as variable accesses. It takes a single Boolean
+parameter for whether the compiler should look for a following `=` operator and parse a setter. 
+
+
+### Misusing this
+
+Our VM now supports users *correctly* using `this`, but we also need to make sure it properly handles users misusing 
+`this`. Lox says it is a compile error a `this` expression to appear outside of the body of a method. These two wrong 
+uses should be caught by the compiler:
+```shell
+print this;   // At top level
+
+fun notMethod() {
+  print this;  // In a function
+}
+```
+
+We could try to resolve "this" and then report an error if it wasn't found in any of the surrounding lexical scopes. 
+That would work, but would require us to shuffle around a bunch of code, since right now the code for resolving a 
+variable implicitly considers it a global access if no declaration is found.
