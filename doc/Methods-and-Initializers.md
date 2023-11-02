@@ -227,3 +227,16 @@ Now that we support methods, to add initializers, we merely need to implement th
 > ```
 
 ### Invoking initializers
+
+### Initializer return values
+
+The next step is ensuring that constructing an interface of a class with an initializer always returns the new instance,
+and not `nil` or whatever the body of the initializer returns. Right now, if a class defines an initializer, then when
+an instance is constructed, the VM pushes a call to that initializer onto the CallFrame stack. Then it just keeps on
+trucking.
+
+The user's invocation on the class to create the instance will complete whenever that initializer method, it will emit
+different bytecode at the end of the body to return `this` from the method instead of the usual implicit `nil` most
+functions return. In order to do *that*, the compiler needs to actually know when it is compiling an initializer. We
+detect that by checking to see if the name of the method we're compiling is "init".
+
