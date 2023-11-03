@@ -304,7 +304,7 @@ static uint8_t identifierConstant(Token* name) {
                                            name->length)));
 }
 
-static bool identifierEqual(Token* a, Token* b) {
+static bool identifiersEqual(Token* a, Token* b) {
     if (a->length != b->length) return false;
     return memcmp(a->start, b->start, a->length) == 0;
 }
@@ -320,7 +320,7 @@ static bool identifierEqual(Token* a, Token* b) {
 static int resolveLocal(Compiler* compiler, Token* name) {
     for (int i = compiler->localCount - 1; i >= 0; i--) {
         Local* local = &compiler->locals[i];
-        if (identifierEqual(name, &local->name)) {
+        if (identifiersEqual(name, &local->name)) {
             if (local->depth == -1) {
                 error("Can't read local variable in its own initializer.");
             }
@@ -395,7 +395,7 @@ static void declareVariable() {
             break;
         }
 
-        if (identifierEqual(name, &local->name)) {
+        if (identifiersEqual(name, &local->name)) {
             error("Already a variable with this name in this scope.");
         }
     }
@@ -580,6 +580,7 @@ static void method() {
 
 // this is function that defined at line 801
 static void namedVariable(Token name, bool canAssign);
+static void variable(bool canAssign);
 
 static void classDeclaration() {
     consume(TOKEN_IDENTIFIER, "Expect class name.");
@@ -594,7 +595,7 @@ static void classDeclaration() {
     classCompiler.enclosing = currentClass;
     currentClass = &classCompiler;
 
-    if (match(TOKEN_LASS)) {
+    if (match(TOKEN_LESS)) {
         consume(TOKEN_IDENTIFIER, "Expect superclass name.");
         variable(false);
 
