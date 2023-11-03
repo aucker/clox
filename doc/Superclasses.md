@@ -45,3 +45,5 @@ super calls are statically resolved.
 Our compiler already emits code to load the superclass onto the stack. Instead of leaving that slot as a temporary, we
 create a new scope and make it a local variable.
 
+## Super Calls
+
