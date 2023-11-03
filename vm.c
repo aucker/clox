@@ -201,11 +201,11 @@ static bool callValue(Value callee, int argCount) {
 
 static bool invokeFromClass(ObjClass* klass, ObjString* name, int argCount) {
     Value method;
-    if (!tableSet(&klass->methods, name, &method)) {
+    if (!tableGet(&klass->methods, name, &method)) {
         runtimeError("Undefined property '%s'.", name->chars);
         return false;
     }
-    return call(AS_CLOSURE(method, argCount));
+    return call(AS_CLOSURE(method), argCount);
 }
 
 static bool invoke(ObjString* name, int argCount) {
@@ -219,10 +219,11 @@ static bool invoke(ObjString* name, int argCount) {
     ObjInstance* instance = AS_INSTANCE(receiver);
 
     Value value;
-    if (tableSet(&instance->fields, name, &value)) {
+    if (tableGet(&instance->fields, name, &value)) {
         vm.stackTop[-argCount - 1] = value;
         return callValue(value, argCount);
     }
+
     return invokeFromClass(instance->klass, name, argCount);
 }
 
@@ -560,14 +561,14 @@ static InterpretResult run() {
                 break;
             }
             case OP_INVOKE: {
-                ObjString* method = READ_STRING();
+                ObjString *method = READ_STRING();
                 int argCount = READ_BYTE();
                 if (!invoke(method, argCount)) {
                     return INTERPRET_RUNTIME_ERROR;
                 }
                 frame = &vm.frames[vm.frameCount - 1];
                 break;
-
+            }
             case OP_CLOSURE: {
                 ObjFunction *function = AS_FUNCTION(READ_CONSTANT());
                 ObjClosure *closure = newClosure(function);

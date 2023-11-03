@@ -258,3 +258,18 @@ interpreter. Right now, method calls even in clox are slow.
 Lox's semantics define a method invocation as two operations - accessing the method and then calling the result. Our VM 
 must support those as separate operations bc the user can separate them. You can access a method w/o calling it and then
 invoke the bound method later. Nothing we've implemented so far is unnecessary.
+
+
+The code we wrote here follows a typical pattern in optimization:
+1. Recognize a common operation or sequence of operations that is performance critical. In this case, it is a method 
+    access followed by a call.
+2. Add an optimized implementation of that pattern. That's our `OP_INVOKE` instruction.
+3. Guard the optimized code with some conditional logic that validates that the pattern actually applies. If it does, 
+    stay on the fast path. Otherwise, fall back to a slower but more robust unoptimized behavior. Here, that means 
+    checking that we are actually calling a method and not accessing a field.
+
+As your language work moves from getting the implementation working *at all* to getting it to work *faster*, you will
+find yourself spending more and more time looking for patterns like this and adding guarded optimizations for them. 
+Full-time VM engineers spend much of their careers in this loop.
+
+Clox now supports most of the features of an object-oriented programming language, and with respectable performance.
