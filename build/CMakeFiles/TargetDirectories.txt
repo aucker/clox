@@ -1,0 +1,3 @@
+/home/aucker/dev/clox/build/CMakeFiles/clox.dir
+/home/aucker/dev/clox/build/CMakeFiles/edit_cache.dir
+/home/aucker/dev/clox/build/CMakeFiles/rebuild_cache.dir
