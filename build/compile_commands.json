@@ -1,0 +1,32 @@
+[
+{
+  "directory": "/home/aucker/dev/clox/build",
+  "command": "/usr/bin/cc -I/home/aucker/dev/clox/include -g -std=gnu99 -o CMakeFiles/clox.dir/src/chunk.c.o -c /home/aucker/dev/clox/src/chunk.c",
+  "file": "/home/aucker/dev/clox/src/chunk.c",
+  "output": "CMakeFiles/clox.dir/src/chunk.c.o"
+},
+{
+  "directory": "/home/aucker/dev/clox/build",
+  "command": "/usr/bin/cc -I/home/aucker/dev/clox/include -g -std=gnu99 -o CMakeFiles/clox.dir/src/debug.c.o -c /home/aucker/dev/clox/src/debug.c",
+  "file": "/home/aucker/dev/clox/src/debug.c",
+  "output": "CMakeFiles/clox.dir/src/debug.c.o"
+},
+{
+  "directory": "/home/aucker/dev/clox/build",
+  "command": "/usr/bin/cc -I/home/aucker/dev/clox/include -g -std=gnu99 -o CMakeFiles/clox.dir/src/main.c.o -c /home/aucker/dev/clox/src/main.c",
+  "file": "/home/aucker/dev/clox/src/main.c",
+  "output": "CMakeFiles/clox.dir/src/main.c.o"
+},
+{
+  "directory": "/home/aucker/dev/clox/build",
+  "command": "/usr/bin/cc -I/home/aucker/dev/clox/include -g -std=gnu99 -o CMakeFiles/clox.dir/src/memory.c.o -c /home/aucker/dev/clox/src/memory.c",
+  "file": "/home/aucker/dev/clox/src/memory.c",
+  "output": "CMakeFiles/clox.dir/src/memory.c.o"
+},
+{
+  "directory": "/home/aucker/dev/clox/build",
+  "command": "/usr/bin/cc -I/home/aucker/dev/clox/include -g -std=gnu99 -o CMakeFiles/clox.dir/src/value.c.o -c /home/aucker/dev/clox/src/value.c",
+  "file": "/home/aucker/dev/clox/src/value.c",
+  "output": "CMakeFiles/clox.dir/src/value.c.o"
+}
+]
