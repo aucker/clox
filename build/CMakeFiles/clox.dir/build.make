@@ -69,79 +69,95 @@ include CMakeFiles/clox.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/clox.dir/flags.make
 
-CMakeFiles/clox.dir/main.c.o: CMakeFiles/clox.dir/flags.make
-CMakeFiles/clox.dir/main.c.o: /home/aucker/dev/clox/main.c
-CMakeFiles/clox.dir/main.c.o: CMakeFiles/clox.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aucker/dev/clox/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/clox.dir/main.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/clox.dir/main.c.o -MF CMakeFiles/clox.dir/main.c.o.d -o CMakeFiles/clox.dir/main.c.o -c /home/aucker/dev/clox/main.c
+CMakeFiles/clox.dir/src/chunk.c.o: CMakeFiles/clox.dir/flags.make
+CMakeFiles/clox.dir/src/chunk.c.o: /home/aucker/dev/clox/src/chunk.c
+CMakeFiles/clox.dir/src/chunk.c.o: CMakeFiles/clox.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aucker/dev/clox/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/clox.dir/src/chunk.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/clox.dir/src/chunk.c.o -MF CMakeFiles/clox.dir/src/chunk.c.o.d -o CMakeFiles/clox.dir/src/chunk.c.o -c /home/aucker/dev/clox/src/chunk.c
 
-CMakeFiles/clox.dir/main.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/clox.dir/main.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/aucker/dev/clox/main.c > CMakeFiles/clox.dir/main.c.i
+CMakeFiles/clox.dir/src/chunk.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/clox.dir/src/chunk.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/aucker/dev/clox/src/chunk.c > CMakeFiles/clox.dir/src/chunk.c.i
 
-CMakeFiles/clox.dir/main.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/clox.dir/main.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/aucker/dev/clox/main.c -o CMakeFiles/clox.dir/main.c.s
+CMakeFiles/clox.dir/src/chunk.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/clox.dir/src/chunk.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/aucker/dev/clox/src/chunk.c -o CMakeFiles/clox.dir/src/chunk.c.s
 
-CMakeFiles/clox.dir/chunk.c.o: CMakeFiles/clox.dir/flags.make
-CMakeFiles/clox.dir/chunk.c.o: /home/aucker/dev/clox/chunk.c
-CMakeFiles/clox.dir/chunk.c.o: CMakeFiles/clox.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aucker/dev/clox/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/clox.dir/chunk.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/clox.dir/chunk.c.o -MF CMakeFiles/clox.dir/chunk.c.o.d -o CMakeFiles/clox.dir/chunk.c.o -c /home/aucker/dev/clox/chunk.c
+CMakeFiles/clox.dir/src/debug.c.o: CMakeFiles/clox.dir/flags.make
+CMakeFiles/clox.dir/src/debug.c.o: /home/aucker/dev/clox/src/debug.c
+CMakeFiles/clox.dir/src/debug.c.o: CMakeFiles/clox.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aucker/dev/clox/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/clox.dir/src/debug.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/clox.dir/src/debug.c.o -MF CMakeFiles/clox.dir/src/debug.c.o.d -o CMakeFiles/clox.dir/src/debug.c.o -c /home/aucker/dev/clox/src/debug.c
 
-CMakeFiles/clox.dir/chunk.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/clox.dir/chunk.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/aucker/dev/clox/chunk.c > CMakeFiles/clox.dir/chunk.c.i
+CMakeFiles/clox.dir/src/debug.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/clox.dir/src/debug.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/aucker/dev/clox/src/debug.c > CMakeFiles/clox.dir/src/debug.c.i
 
-CMakeFiles/clox.dir/chunk.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/clox.dir/chunk.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/aucker/dev/clox/chunk.c -o CMakeFiles/clox.dir/chunk.c.s
+CMakeFiles/clox.dir/src/debug.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/clox.dir/src/debug.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/aucker/dev/clox/src/debug.c -o CMakeFiles/clox.dir/src/debug.c.s
 
-CMakeFiles/clox.dir/memory.c.o: CMakeFiles/clox.dir/flags.make
-CMakeFiles/clox.dir/memory.c.o: /home/aucker/dev/clox/memory.c
-CMakeFiles/clox.dir/memory.c.o: CMakeFiles/clox.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aucker/dev/clox/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/clox.dir/memory.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/clox.dir/memory.c.o -MF CMakeFiles/clox.dir/memory.c.o.d -o CMakeFiles/clox.dir/memory.c.o -c /home/aucker/dev/clox/memory.c
+CMakeFiles/clox.dir/src/main.c.o: CMakeFiles/clox.dir/flags.make
+CMakeFiles/clox.dir/src/main.c.o: /home/aucker/dev/clox/src/main.c
+CMakeFiles/clox.dir/src/main.c.o: CMakeFiles/clox.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aucker/dev/clox/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/clox.dir/src/main.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/clox.dir/src/main.c.o -MF CMakeFiles/clox.dir/src/main.c.o.d -o CMakeFiles/clox.dir/src/main.c.o -c /home/aucker/dev/clox/src/main.c
 
-CMakeFiles/clox.dir/memory.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/clox.dir/memory.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/aucker/dev/clox/memory.c > CMakeFiles/clox.dir/memory.c.i
+CMakeFiles/clox.dir/src/main.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/clox.dir/src/main.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/aucker/dev/clox/src/main.c > CMakeFiles/clox.dir/src/main.c.i
 
-CMakeFiles/clox.dir/memory.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/clox.dir/memory.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/aucker/dev/clox/memory.c -o CMakeFiles/clox.dir/memory.c.s
+CMakeFiles/clox.dir/src/main.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/clox.dir/src/main.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/aucker/dev/clox/src/main.c -o CMakeFiles/clox.dir/src/main.c.s
 
-CMakeFiles/clox.dir/debug.c.o: CMakeFiles/clox.dir/flags.make
-CMakeFiles/clox.dir/debug.c.o: /home/aucker/dev/clox/debug.c
-CMakeFiles/clox.dir/debug.c.o: CMakeFiles/clox.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aucker/dev/clox/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/clox.dir/debug.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/clox.dir/debug.c.o -MF CMakeFiles/clox.dir/debug.c.o.d -o CMakeFiles/clox.dir/debug.c.o -c /home/aucker/dev/clox/debug.c
+CMakeFiles/clox.dir/src/memory.c.o: CMakeFiles/clox.dir/flags.make
+CMakeFiles/clox.dir/src/memory.c.o: /home/aucker/dev/clox/src/memory.c
+CMakeFiles/clox.dir/src/memory.c.o: CMakeFiles/clox.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aucker/dev/clox/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/clox.dir/src/memory.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/clox.dir/src/memory.c.o -MF CMakeFiles/clox.dir/src/memory.c.o.d -o CMakeFiles/clox.dir/src/memory.c.o -c /home/aucker/dev/clox/src/memory.c
 
-CMakeFiles/clox.dir/debug.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/clox.dir/debug.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/aucker/dev/clox/debug.c > CMakeFiles/clox.dir/debug.c.i
+CMakeFiles/clox.dir/src/memory.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/clox.dir/src/memory.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/aucker/dev/clox/src/memory.c > CMakeFiles/clox.dir/src/memory.c.i
 
-CMakeFiles/clox.dir/debug.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/clox.dir/debug.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/aucker/dev/clox/debug.c -o CMakeFiles/clox.dir/debug.c.s
+CMakeFiles/clox.dir/src/memory.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/clox.dir/src/memory.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/aucker/dev/clox/src/memory.c -o CMakeFiles/clox.dir/src/memory.c.s
+
+CMakeFiles/clox.dir/src/value.c.o: CMakeFiles/clox.dir/flags.make
+CMakeFiles/clox.dir/src/value.c.o: /home/aucker/dev/clox/src/value.c
+CMakeFiles/clox.dir/src/value.c.o: CMakeFiles/clox.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aucker/dev/clox/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/clox.dir/src/value.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/clox.dir/src/value.c.o -MF CMakeFiles/clox.dir/src/value.c.o.d -o CMakeFiles/clox.dir/src/value.c.o -c /home/aucker/dev/clox/src/value.c
+
+CMakeFiles/clox.dir/src/value.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/clox.dir/src/value.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/aucker/dev/clox/src/value.c > CMakeFiles/clox.dir/src/value.c.i
+
+CMakeFiles/clox.dir/src/value.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/clox.dir/src/value.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/aucker/dev/clox/src/value.c -o CMakeFiles/clox.dir/src/value.c.s
 
 # Object files for target clox
 clox_OBJECTS = \
-"CMakeFiles/clox.dir/main.c.o" \
-"CMakeFiles/clox.dir/chunk.c.o" \
-"CMakeFiles/clox.dir/memory.c.o" \
-"CMakeFiles/clox.dir/debug.c.o"
+"CMakeFiles/clox.dir/src/chunk.c.o" \
+"CMakeFiles/clox.dir/src/debug.c.o" \
+"CMakeFiles/clox.dir/src/main.c.o" \
+"CMakeFiles/clox.dir/src/memory.c.o" \
+"CMakeFiles/clox.dir/src/value.c.o"
 
 # External object files for target clox
 clox_EXTERNAL_OBJECTS =
 
-clox: CMakeFiles/clox.dir/main.c.o
-clox: CMakeFiles/clox.dir/chunk.c.o
-clox: CMakeFiles/clox.dir/memory.c.o
-clox: CMakeFiles/clox.dir/debug.c.o
+clox: CMakeFiles/clox.dir/src/chunk.c.o
+clox: CMakeFiles/clox.dir/src/debug.c.o
+clox: CMakeFiles/clox.dir/src/main.c.o
+clox: CMakeFiles/clox.dir/src/memory.c.o
+clox: CMakeFiles/clox.dir/src/value.c.o
 clox: CMakeFiles/clox.dir/build.make
 clox: CMakeFiles/clox.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/aucker/dev/clox/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking C executable clox"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/aucker/dev/clox/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking C executable clox"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/clox.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

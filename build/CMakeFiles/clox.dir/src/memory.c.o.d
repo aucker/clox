@@ -1,6 +1,6 @@
-CMakeFiles/clox.dir/memory.c.o: /home/aucker/dev/clox/memory.c \
- /usr/include/stdc-predef.h /home/aucker/dev/clox/memory.h \
- /home/aucker/dev/clox/common.h \
+CMakeFiles/clox.dir/src/memory.c.o: /home/aucker/dev/clox/src/memory.c \
+ /usr/include/stdc-predef.h /home/aucker/dev/clox/include/memory.h \
+ /home/aucker/dev/clox/include/common.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \

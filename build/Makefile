@@ -129,101 +129,125 @@ clox/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/build
 .PHONY : clox/fast
 
-chunk.o: chunk.c.o
-.PHONY : chunk.o
+src/chunk.o: src/chunk.c.o
+.PHONY : src/chunk.o
 
 # target to build an object file
-chunk.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/chunk.c.o
-.PHONY : chunk.c.o
+src/chunk.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/src/chunk.c.o
+.PHONY : src/chunk.c.o
 
-chunk.i: chunk.c.i
-.PHONY : chunk.i
+src/chunk.i: src/chunk.c.i
+.PHONY : src/chunk.i
 
 # target to preprocess a source file
-chunk.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/chunk.c.i
-.PHONY : chunk.c.i
+src/chunk.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/src/chunk.c.i
+.PHONY : src/chunk.c.i
 
-chunk.s: chunk.c.s
-.PHONY : chunk.s
+src/chunk.s: src/chunk.c.s
+.PHONY : src/chunk.s
 
 # target to generate assembly for a file
-chunk.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/chunk.c.s
-.PHONY : chunk.c.s
+src/chunk.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/src/chunk.c.s
+.PHONY : src/chunk.c.s
 
-debug.o: debug.c.o
-.PHONY : debug.o
+src/debug.o: src/debug.c.o
+.PHONY : src/debug.o
 
 # target to build an object file
-debug.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/debug.c.o
-.PHONY : debug.c.o
+src/debug.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/src/debug.c.o
+.PHONY : src/debug.c.o
 
-debug.i: debug.c.i
-.PHONY : debug.i
+src/debug.i: src/debug.c.i
+.PHONY : src/debug.i
 
 # target to preprocess a source file
-debug.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/debug.c.i
-.PHONY : debug.c.i
+src/debug.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/src/debug.c.i
+.PHONY : src/debug.c.i
 
-debug.s: debug.c.s
-.PHONY : debug.s
+src/debug.s: src/debug.c.s
+.PHONY : src/debug.s
 
 # target to generate assembly for a file
-debug.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/debug.c.s
-.PHONY : debug.c.s
+src/debug.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/src/debug.c.s
+.PHONY : src/debug.c.s
 
-main.o: main.c.o
-.PHONY : main.o
+src/main.o: src/main.c.o
+.PHONY : src/main.o
 
 # target to build an object file
-main.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/main.c.o
-.PHONY : main.c.o
+src/main.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/src/main.c.o
+.PHONY : src/main.c.o
 
-main.i: main.c.i
-.PHONY : main.i
+src/main.i: src/main.c.i
+.PHONY : src/main.i
 
 # target to preprocess a source file
-main.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/main.c.i
-.PHONY : main.c.i
+src/main.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/src/main.c.i
+.PHONY : src/main.c.i
 
-main.s: main.c.s
-.PHONY : main.s
+src/main.s: src/main.c.s
+.PHONY : src/main.s
 
 # target to generate assembly for a file
-main.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/main.c.s
-.PHONY : main.c.s
+src/main.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/src/main.c.s
+.PHONY : src/main.c.s
 
-memory.o: memory.c.o
-.PHONY : memory.o
+src/memory.o: src/memory.c.o
+.PHONY : src/memory.o
 
 # target to build an object file
-memory.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/memory.c.o
-.PHONY : memory.c.o
+src/memory.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/src/memory.c.o
+.PHONY : src/memory.c.o
 
-memory.i: memory.c.i
-.PHONY : memory.i
+src/memory.i: src/memory.c.i
+.PHONY : src/memory.i
 
 # target to preprocess a source file
-memory.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/memory.c.i
-.PHONY : memory.c.i
+src/memory.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/src/memory.c.i
+.PHONY : src/memory.c.i
 
-memory.s: memory.c.s
-.PHONY : memory.s
+src/memory.s: src/memory.c.s
+.PHONY : src/memory.s
 
 # target to generate assembly for a file
-memory.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/memory.c.s
-.PHONY : memory.c.s
+src/memory.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/src/memory.c.s
+.PHONY : src/memory.c.s
+
+src/value.o: src/value.c.o
+.PHONY : src/value.o
+
+# target to build an object file
+src/value.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/src/value.c.o
+.PHONY : src/value.c.o
+
+src/value.i: src/value.c.i
+.PHONY : src/value.i
+
+# target to preprocess a source file
+src/value.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/src/value.c.i
+.PHONY : src/value.c.i
+
+src/value.s: src/value.c.s
+.PHONY : src/value.s
+
+# target to generate assembly for a file
+src/value.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/clox.dir/build.make CMakeFiles/clox.dir/src/value.c.s
+.PHONY : src/value.c.s
 
 # Help Target
 help:
@@ -234,18 +258,21 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... clox"
-	@echo "... chunk.o"
-	@echo "... chunk.i"
-	@echo "... chunk.s"
-	@echo "... debug.o"
-	@echo "... debug.i"
-	@echo "... debug.s"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
-	@echo "... memory.o"
-	@echo "... memory.i"
-	@echo "... memory.s"
+	@echo "... src/chunk.o"
+	@echo "... src/chunk.i"
+	@echo "... src/chunk.s"
+	@echo "... src/debug.o"
+	@echo "... src/debug.i"
+	@echo "... src/debug.s"
+	@echo "... src/main.o"
+	@echo "... src/main.i"
+	@echo "... src/main.s"
+	@echo "... src/memory.o"
+	@echo "... src/memory.i"
+	@echo "... src/memory.s"
+	@echo "... src/value.o"
+	@echo "... src/value.i"
+	@echo "... src/value.s"
 .PHONY : help
 
 

@@ -1,1 +1,1 @@
-/usr/bin/cc CMakeFiles/clox.dir/main.c.o CMakeFiles/clox.dir/chunk.c.o CMakeFiles/clox.dir/memory.c.o CMakeFiles/clox.dir/debug.c.o -o clox
+/usr/bin/cc CMakeFiles/clox.dir/src/chunk.c.o CMakeFiles/clox.dir/src/debug.c.o CMakeFiles/clox.dir/src/main.c.o CMakeFiles/clox.dir/src/memory.c.o CMakeFiles/clox.dir/src/value.c.o -o clox

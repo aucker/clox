@@ -1,5 +1,5 @@
-CMakeFiles/clox.dir/chunk.c.o: /home/aucker/dev/clox/chunk.c \
- /usr/include/stdc-predef.h /home/aucker/dev/clox/chunk.h \
+CMakeFiles/clox.dir/src/chunk.c.o: /home/aucker/dev/clox/src/chunk.c \
+ /usr/include/stdc-predef.h /home/aucker/dev/clox/include/chunk.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/types.h /usr/include/features.h \
  /usr/include/features-time64.h \
@@ -11,14 +11,14 @@ CMakeFiles/clox.dir/chunk.c.o: /home/aucker/dev/clox/chunk.c \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
  /usr/include/x86_64-linux-gnu/bits/time64.h \
- /home/aucker/dev/clox/common.h \
+ /home/aucker/dev/clox/include/common.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
- /home/aucker/dev/clox/memory.h /usr/include/stdlib.h \
+ /home/aucker/dev/clox/include/value.h /usr/include/stdlib.h \
  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
  /usr/include/x86_64-linux-gnu/bits/floatn.h \
@@ -44,4 +44,6 @@ CMakeFiles/clox.dir/chunk.c.o: /home/aucker/dev/clox/chunk.c \
  /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h \
  /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
  /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h /usr/include/alloca.h \
- /usr/include/x86_64-linux-gnu/bits/stdlib-float.h
+ /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
+ /home/aucker/dev/clox/include/memory.h \
+ /home/aucker/dev/clox/include/value.h

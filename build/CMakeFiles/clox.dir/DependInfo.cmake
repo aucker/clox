@@ -8,10 +8,11 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/aucker/dev/clox/chunk.c" "CMakeFiles/clox.dir/chunk.c.o" "gcc" "CMakeFiles/clox.dir/chunk.c.o.d"
-  "/home/aucker/dev/clox/debug.c" "CMakeFiles/clox.dir/debug.c.o" "gcc" "CMakeFiles/clox.dir/debug.c.o.d"
-  "/home/aucker/dev/clox/main.c" "CMakeFiles/clox.dir/main.c.o" "gcc" "CMakeFiles/clox.dir/main.c.o.d"
-  "/home/aucker/dev/clox/memory.c" "CMakeFiles/clox.dir/memory.c.o" "gcc" "CMakeFiles/clox.dir/memory.c.o.d"
+  "/home/aucker/dev/clox/src/chunk.c" "CMakeFiles/clox.dir/src/chunk.c.o" "gcc" "CMakeFiles/clox.dir/src/chunk.c.o.d"
+  "/home/aucker/dev/clox/src/debug.c" "CMakeFiles/clox.dir/src/debug.c.o" "gcc" "CMakeFiles/clox.dir/src/debug.c.o.d"
+  "/home/aucker/dev/clox/src/main.c" "CMakeFiles/clox.dir/src/main.c.o" "gcc" "CMakeFiles/clox.dir/src/main.c.o.d"
+  "/home/aucker/dev/clox/src/memory.c" "CMakeFiles/clox.dir/src/memory.c.o" "gcc" "CMakeFiles/clox.dir/src/memory.c.o.d"
+  "/home/aucker/dev/clox/src/value.c" "CMakeFiles/clox.dir/src/value.c.o" "gcc" "CMakeFiles/clox.dir/src/value.c.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.
