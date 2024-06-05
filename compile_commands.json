@@ -28,5 +28,11 @@
   "command": "/usr/bin/cc  -I/home/aucker/dev/clox/include -std=gnu99 -o CMakeFiles/clox.dir/src/value.c.o -c /home/aucker/dev/clox/src/value.c",
   "file": "/home/aucker/dev/clox/src/value.c",
   "output": "CMakeFiles/clox.dir/src/value.c.o"
+},
+{
+  "directory": "/home/aucker/dev/clox",
+  "command": "/usr/bin/cc  -I/home/aucker/dev/clox/include -std=gnu99 -o CMakeFiles/clox.dir/src/vm.c.o -c /home/aucker/dev/clox/src/vm.c",
+  "file": "/home/aucker/dev/clox/src/vm.c",
+  "output": "CMakeFiles/clox.dir/src/vm.c.o"
 }
 ]
