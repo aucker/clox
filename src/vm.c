@@ -9,7 +9,9 @@
 
 VM vm;
 
-void initVM() {}
+static void resetStack() { vm.stackTop = vm.stack; }
+
+void initVM() { resetStack(); }
 
 void freeVM() {}
 
@@ -43,4 +45,14 @@ InterpretResult interpret(Chunk* chunk) {
   vm.chunk = chunk;
   vm.ip = vm.chunk->code;
   return run();
+}
+
+void push(Value value) {
+  *vm.stackTop = value;
+  vm.stackTop++;
+}
+
+Value pop() {
+  vm.stackTop--;
+  return *vm.stackTop;
 }
