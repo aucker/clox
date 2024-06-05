@@ -21,4 +21,4 @@ CMakeFiles/clox.dir/src/main.c.o: /home/aucker/dev/clox/src/main.c \
  /home/aucker/dev/clox/include/value.h \
  /home/aucker/dev/clox/include/common.h \
  /home/aucker/dev/clox/include/debug.h \
- /home/aucker/dev/clox/include/chunk.h
+ /home/aucker/dev/clox/include/chunk.h /home/aucker/dev/clox/include/vm.h
