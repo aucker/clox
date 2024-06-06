@@ -83,7 +83,7 @@ InterpretResult interpret(const char *source) {
   }
 
   vm.chunk = &chunk;
-  vm.ip = vm.chunk->code;
+  vm.ip    = vm.chunk->code;
 
   InterpretResult result = run();
 
