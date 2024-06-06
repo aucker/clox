@@ -27,7 +27,7 @@ static InterpretResult run() {
 
   for (;;) {
 #ifdef DEBUG_TRACE_EXECUTION
-    printf("        ");
+    printf("           ");
     for (Value* slot = vm.stack; slot < vm.stackTop; slot++) {
       printf("[ ");
       printValue(*slot);
